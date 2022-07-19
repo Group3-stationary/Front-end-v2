@@ -1,0 +1,40 @@
+.userhome{
+    display: flex;
+    flex-direction: column;
+    .userhome-bottom{
+        display: flex;
+        .categories{
+            padding-top: 49px;
+        }
+        .products{
+            flex: 80%;
+        }
+    }
+}
+
+
+
+@media screen and (max-width: 1000px) {
+    .userhome-bottom{
+        display: flex;
+        .products{
+            flex: 80%;
+        }
+    }
+}
+@media screen and (max-width: 750px) {
+    .userhome-bottom{
+        display: flex;
+        .products{
+            flex: 80%;
+        }
+    }  
+}
+@media screen and (max-width: 500px) {
+    .userhome-bottom{
+        display: flex;
+        .products{
+            flex: 80%;
+        }
+    }
+}
