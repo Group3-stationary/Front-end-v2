@@ -1,0 +1,66 @@
+.home{
+    display: flex;
+    .homeContainer{
+        flex: 85%;
+        .widgets, .charts{
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+        .charts{
+            padding: 5px 20px;
+        }
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .home{
+        display: flex;
+        .homeContainer{
+            flex: 70%;
+
+            .widgets, .charts{
+                display: flex;
+                padding: 20px;
+            }
+            .charts{
+                flex-direction: column;
+                padding: 5px 20px;
+            }
+        }
+    }  
+}
+@media screen and (max-width: 750px) {
+    .home{
+        display: flex;
+        .homeContainer{
+            flex: 40%;
+            .widgets, .charts{
+                display: flex;
+                flex-direction: column;
+                padding: 20px;
+            }
+            .charts{
+                flex-direction: column;
+                padding: 5px 20px;
+            }
+        }
+    }    
+}
+@media screen and (max-width: 500px) {
+    .home{
+        display: flex;
+        .homeContainer{
+            flex: 40%;
+            .widgets, .charts{
+                display: flex;
+                flex-direction: column;
+                padding: 20px;
+            }
+            .charts{
+                flex-direction: column;
+                padding: 5px 20px;
+            }
+        }
+    }    
+}
