@@ -33,8 +33,8 @@ export const SidebarData = [
     },
     {
       icon: HowToRegIcon,
-      heading: "Permission",
-      link: "",
+      heading: "Roles",
+      link: "/admin/roles",
     },
 ];
   

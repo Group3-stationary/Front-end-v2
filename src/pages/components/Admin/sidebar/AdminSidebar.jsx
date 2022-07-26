@@ -13,8 +13,8 @@ const AdminSidebar = (prop) => {
 
                 {SidebarData.map((item, index) => {
                     return (
-                        <Link to={item.link} style={{ textDecoration: "none" }}  key={index}>
-                            <div className={ index === prop.id  ?  "menuItem active" : "menuItem"}                        
+                        <Link to={item.link} style={{ textDecoration: "none" }} key={index}>
+                            <div className={index === prop.id ? "menuItem active" : "menuItem"}
                             >
                                 <div className="icon">
                                     <item.icon />
@@ -26,10 +26,11 @@ const AdminSidebar = (prop) => {
                 })}
 
                 <div className="menuItem">
-                    <div className="icon">
-                        <LogoutIcon />
-                    </div>
-                    <span>Logout</span>
+                    <Link to={"/"} style={{ textDecoration: "none" }} >
+                        <div className="icon">
+                            <LogoutIcon />  <span >Logout</span>
+                        </div>           
+                    </Link>
                 </div>
             </div>
             <div className="bottom">

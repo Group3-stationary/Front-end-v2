@@ -1,37 +1,41 @@
 import React, { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
-import { Link, NavLink } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import StarIcon from '@mui/icons-material/Star';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import "./products.scss"
 import { Container } from "@mui/system";
 import { Col, Row } from "react-bootstrap";
+import http from "../../../../api/client";
+import api from "../../../../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { ProductGetAll } from "../../../../redux/product/product.action";
+import { addCart } from "../../../../redux/order/order.action";
 
 const Products = () => {
-  const [data, setData] = useState([]);
-  const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
-  let componentMounted = true;
+  let navigate = useNavigate();
+
+
+  const dispatch = useDispatch();
+  const getAllProduct = async () => {
+    try {
+      const res = await http.get(api.GetAllProduct);
+      dispatch(ProductGetAll(res.data))
+    } catch (err) {
+      navigate("/")
+    }
+  }
+  const products = useSelector((state) => state.products.products)
+
   useEffect(() => {
-    const getProducts = async () => {
-      setLoading(true);
-      const response = await fetch("http://fakestoreapi.com/products");
-      if (componentMounted) {
-        setData(await response.clone().json());
-        setFilter(await response.json());
-        setLoading(false);
-        console.log(filter);
-      }
-
-      return () => {
-        componentMounted = false;
-      };
-    };
-
-    getProducts();
-  }, []);
+    getAllProduct()
+  }, [])
+  
+  const addProduct = (product) => {
+        dispatch(addCart(product));
+  }
 
   const Loading = () => {
     return (
@@ -72,24 +76,22 @@ const Products = () => {
         </div> */}
         <Container>
           <Row xs={1} md={2}>
-            {filter.map((product) => {
+            {products.map((product) => {
               return (
-                <>
-                  <Col md={3} sm={6} key={product.id}>
+                  <Col md={3} sm={6} key={product.productId}>
                     <div className="product-grid3">
                       <div className="product-image3">
                         <div>
-                          <img className="pic-1" src={product.image} alt={product.title} />
-                          <img className="pic-2" src={product.image} alt={product.title} />
+                          <img className="pic-1" src={ "http://localhost:8832/"+product.featureImgPath} alt={product.title} />
+                          <img className="pic-2" src={ "http://localhost:8832/"+product.featureImgPath} alt={product.title} />
                         </div>
                         <ul className="social">
-                          <li><Link to={`/home/products/${product.id}`} className="btn btn-outline-dark"><div><ShoppingBagIcon /></div></Link></li>
-                          <li><div><ShoppingCartIcon /></div></li>
+                          <li><button className="btn-detail"  onClick={()=>addProduct(product)}><ShoppingCartIcon /></button></li>
                         </ul>
                         <span className="product-new-label">New</span>
                       </div>
                       <div className="product-content">
-                        <h3 className="title"><div>{product.title}</div></h3>
+                        <h3 className="title"><div>{product.productName}</div></h3>
                         <div className="price">
                           $63.50
                           <span>{product.price}</span>
@@ -104,7 +106,6 @@ const Products = () => {
                       </div>
                     </div>
                   </Col>
-                </>
               );
             })}
           </Row>
