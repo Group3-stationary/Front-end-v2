@@ -6,9 +6,9 @@ import Featured from "../../components/Admin/featured/Featured";
 import Chart from "../../components/Admin/chart/Chart";
 const AdminHome = () =>{
     return(
-        <div className="home">
+        <div className="homeAdmin">
            <Sidebar id={0}/>
-           <div className="homeContainer">
+           <div className="homeAdminContainer">
                 <Navbars title="Home"/>
                 <div className="widgets">
                     <Widget type="user"/>

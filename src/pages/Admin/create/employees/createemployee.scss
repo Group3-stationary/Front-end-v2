@@ -2,23 +2,10 @@
     display: flex;
     .homeContainer{
         flex: 85%;
+        margin-bottom: 40px;
         .create{
             display: flex;
             padding-top: 30px;
-            .left{
-                flex:20%;
-                text-align: center;
-                margin-top: 200px;
-                img{
-                    width: 150px;
-                    height: 150px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                }
-            }
-            .right{
-                flex:85%;           
-            }
         }
     }
 }

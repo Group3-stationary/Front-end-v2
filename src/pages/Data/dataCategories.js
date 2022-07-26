@@ -4,12 +4,9 @@ export const categoryColumns = [
     { field: "categoryCode" , headerName : "Category Code" , width : 400},
 ]
 
-
-
-
 export const categoryRows = [{
     id: 1,
-    categoryName: "Thiep",
+    categoryName: "Api",
     categoryCode: "33",
   },
   {
