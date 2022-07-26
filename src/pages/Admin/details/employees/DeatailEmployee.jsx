@@ -1,94 +1,80 @@
-import AdminNavbars from "../../../components/Admin/navbar/AdminNavbar";
-import AdminSidebar from "../../../components/Admin/sidebar/AdminSidebar";
-import "./detailemployee.scss";
-import { Box, Button, Container, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, TextField } from "@mui/material";
-import { useState } from 'react';
-import { useNavigate } from "react-router";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  TextField,
+  FormControl,
+  Grid,
+  Button,
+  InputLabel,
+  Select,
+  MenuItem
+} from "@mui/material";
+import Moment from 'moment';
 
+function DetailsEmployee(props) {
+  const [isOpen, setOpenDialog] = useState(false);
 
-const DetailsEmployee = ({inputs,title}) => {
+  const handleOpen = () => {
+    setOpenDialog(true)
+  }
 
-    
-    const [role, setRole] = useState("1");
-    const [value, setValue] = useState(false);
-    
-    const handleChangeRole = (event) => {
-        setRole(event.target.value);
-      };
-    
-    const handleChange = (event) => {
-        setValue(event.target.value);
-      };
-
-    let navigate = useNavigate();
-
+  const handleClose = () => {
+    setOpenDialog(false)
+  }
+  console.log(props.employee.isAdmin);
   return (
-    <div className="home">
-    <AdminSidebar id={3} />
-    <div className="homeContainer">
-        <AdminNavbars title="Details Employee" />
-        <div className="details sm md">
-          <div className="left">
-            <img src={require('../../../../assets/images/no-image-icon-0.jpg')} alt=""/>
-          </div>
-          <div className="right">
-          <Container>
-                    <Paper>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} md={12} sx={{margin:0.5}}>
-                            <TextField label= "User ID"type="text" fullWidth size="small" name="userid" value="1" InputProps={{readOnly: true}} InputLabelProps={{shrink: true}}
-                            ></TextField>
-                          </Grid>
-                            {inputs.map(input=>(
-                            <Grid item xs={12} md={12} sx={{margin:0.5}} key={input.id}>
-                                <TextField label={input.label} type={input.type} fullWidth size="small" placeholder={input.placeholder} name={input.name} InputProps={{readOnly: true}} InputLabelProps={{shrink: true}}></TextField>
-                            </Grid>
-                                ))}
-                            <Grid item xs={12} md={12} sx={{margin:0.5}}>
-                                    <Box sx={{ minWidth: 120 }}>
-                                    <FormControl fullWidth size="small" disabled>
-                                        <InputLabel id="demo-simple-select-label">Role</InputLabel>
-                                        <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={role}
-                                        label="Role"
-                                        onChange={handleChangeRole}
-                                        >
-                                        
-                                        <MenuItem value={1}>Assistant</MenuItem>
-                                        <MenuItem value={2}>User</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    </Box>
-                            </Grid>
-                            
-                            <Grid item xs={12} md={12} sx={{margin:0.5}}>
-                                <FormControl>
-                                    <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
-                                    <RadioGroup
-                                    aria-labelledby="demo-controlled-radio-buttons-group"
-                                    name="controlled-radio-buttons-group"
-                                    value={value}
-                                    onChange={handleChange}>
-                                    <FormControlLabel value={true} control={<Radio />} label="MALE" disabled />
-                                    <FormControlLabel value={false} control={<Radio />} label="FEMALE" disabled/>
-                                    </RadioGroup>
-                                </FormControl>
-                            </Grid>  
-                            <Grid item>
-                              <Button sx={{marginLeft:40,marginBottom:1}} variant="contained" color="error"
-                              onClick={() => { navigate("/admin/users")}} >Back</Button>
-                            </Grid>      
-                        </Grid>
+    <div>
+      <Button className="editButton" variant="outlined" onClick={handleOpen}>View</Button>
+      <Dialog open={isOpen} maxWidth="md" fullWidth>
+        <DialogTitle textAlign="center">Employee: {props.employee.name}</DialogTitle>
+        <Grid
+          container
+          p={4}
+          spacing={2}
 
-                    </Paper>
-                </Container>
-          </div>
-        </div>
-      </div>
+        >
+          <Grid item md={4}>
+            <TextField label="Employee ID" variant="outlined" className="InputField" fullWidth value={props.employee.id} InputProps={{readOnly: true}} />
+          </Grid>
+          <Grid item md={4}>
+            <TextField label="Name" variant="outlined" className="InputField" fullWidth value={props.employee.name} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField label="Email" variant="outlined" className="InputField" fullWidth value={props.employee.email} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField label="Address" variant="outlined" className="InputField" fullWidth value={props.employee.address} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField label="Phone" variant="outlined" className="InputField" fullWidth value={props.employee.phone} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField  label="Birthday" variant="outlined" className="InputField"  fullWidth value={Moment(props.employee.birthday).format("L")} InputProps={{readOnly: true}}></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField label="Phone" variant="outlined" className="InputField" fullWidth value={props.employee.phone} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField  label="Birthday" variant="outlined" className="InputField"  fullWidth value={Moment(props.employee.birthday).format("L")} InputProps={{readOnly: true}}></TextField>
+          </Grid>
+          {/* <Grid item md={4}>
+                    <TextField label="Password" variant="outlined" className="InputField" fullWidth type="password" value={props.employee.id} InputProps={{readOnly: true}} ></TextField>
+                </Grid> */}
+          <Grid item md={4}>
+            <TextField label="Department" variant="outlined" className="InputField" fullWidth value={props.employee.department} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid item md={4}>
+            <TextField label="Superior" variant="outlined" className="InputField" fullWidth value={props.employee.superiors} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
+          <Grid container item md={12} direction="row" justifyContent="center" alignItems="center">
+            <Button variant="outlined" sx={{ width: "250px" }} onClick={handleClose}>Close</Button>
+          </Grid>
+
+        </Grid>
+      </Dialog>
     </div>
   )
 }
 
-export default DetailsEmployee
+export default DetailsEmployee;

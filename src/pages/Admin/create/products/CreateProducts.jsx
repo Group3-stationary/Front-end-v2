@@ -1,91 +1,420 @@
 import AdminNavbars from "../../../components/Admin/navbar/AdminNavbar";
 import AdminSidebar from "../../../components/Admin/sidebar/AdminSidebar";
 import "./createproducts.scss"
-//import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
-import { useState } from 'react';
-import { Box, Button, Container, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField } from "@mui/material";
+import http from "../../../../api/client";
+import api from "../../../../api/api";
+import ErrorIcon from '@mui/icons-material/Error';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import { RoleGetAll } from "../../../../redux/role/role.action";
+import { useEffect, useState } from 'react';
+import { Box, Button, Container, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField } from "@mui/material";
 import { useNavigate } from "react-router";
+import { green } from "@mui/material/colors";
+import validate from "validate.js";
+import { useDispatch, useSelector } from "react-redux";
 
-const CreateProduct = ({ inputs, title }) => {
-    const [cate, setCate] = useState("");
-    const [file, setFile] = useState("");
-    const [value, setValue] = useState("0");
+const CreateProduct = () => {
+    const [cate, setCate] = useState(false);
+    const [img, setImg] = useState(false);
+    const [role, setRole] = useState(false);
     let navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [success, setSuccess] = useState(false);
 
+    const date = new Date();
+    const [product, setProduct] = useState({
+        productName: "",
+        quantity: 0,
+        price: 0,
+        categoryId: 0,
+        ProductEnable: true,
+        roleId: 0,
+        createdAt: date,
+        images: "",
+    })
+
+    //#region  Validation
+    const [validation, setValidation] = useState({
+        touched: {},
+        errors: {},
+        isvalid: false,
+    });
+    useEffect(() => {
+        const schema = {
+            productName: {
+                presence: {
+                    allowEmpty: false,
+                    message: "^Product's name is required",
+                },
+                length: {
+                    maximum: 50,
+                    minimum: 5,
+                    message: "^Product name must be from 5 to 50 characters",
+                },
+            },
+            quantity: {
+                presence: { allowEmpty: false, message: "^Quantity is required" },
+                numericality: {
+                    onlyInteger: false,
+                    greaterThan: 0,
+                    lessThanOrEqualTo: 1000,
+                    message: "^quantity must be > 0 < 1000",
+                },
+            },
+            price: {
+                presence: { allowEmpty: false, message: "^Price is required" },
+                numericality: {
+                    onlyInteger: false,
+                    greaterThan: 1000,
+                    lessThanOrEqualTo: 100000000,
+                    message: "^Price must be > 1000 < 100000000",
+                },
+            },
+        };
+        const errors = validate.validate(product, schema);
+        setValidation((pre) => ({
+            ...pre,
+            isvalid: errors ? false : true,
+            errors: errors || {},
+        }));
+
+    }, [product]);
+    useEffect(() => {
+        if (product.categoryId !== 0) {
+            setCate(false);
+        } else {
+            setCate(true);
+        }
+
+        if (product.images !== "") {
+            setImg(false);
+        } else {
+            setImg(true);
+        }
+
+        if (product.roleId !== 0) {
+            setRole(false);
+        } else {
+            setRole(true);
+        }
+        check();
+    }, [product.categoryId, product.images, product.roleId, validation])
+    const check = () => {
+        if (validation.isvalid === false) {
+            return true;
+        } else if (product.categoryId === 0) {
+            return true;
+        } else if (product.roleId === 0) {
+            return true;
+        } else if (product.images === "") {
+            return true;
+        }
+        return false;
+    }
+    //#endregion 
+
+    //#region set values and validation
     const handleChange = (event) => {
-        setValue(event.target.value);
+        setProduct((preState) => ({
+            ...preState,
+            [event.target.name]:
+                event.target.type === "checkbox"
+                    ? event.target.checked
+                    : event.target.value,
+        }));
+        setValidation((pre) => ({
+            ...pre,
+            touched: {
+                ...pre.touched,
+                [event.target.name]: true,
+            },
+        }));
     };
 
+    const handleImg = (event) => {
+        setProduct(prePro => ({
+            ...prePro,
+            images: event.target.files[0]
+        }))
+    }
 
-    const handleChangeCate = (event) => {
-        setCate(event.target.value);
+    const hasError = (field) => {
+        return validation.touched[field] && validation.errors[field] ? true : false;
     };
+    //#endregion
+
+    //#region  api categories
+    const categories = useSelector((state) => state.categories.categories);
+    //#endregion
+
+    //#region  api Roles
+    const getAllRole = async () => {
+        const resRoles = await http.get(api.GetAllRoles);
+        dispatch(RoleGetAll(resRoles.data));
+    }
+    useEffect(() => {
+        getAllRole();
+    }, [])
+    const roles = useSelector((state) => state.roles.roles);
+    //#endregion
+
+    //#region  api create product
+    const config = {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    };
+
+    let formData = new FormData();
+    const obj = {
+        productName: product.productName,
+        quantity: product.quantity,
+        price: product.price,
+        categoryId: product.categoryId,
+        productEnable: product.ProductEnable,
+        roleId: product.roleId,
+        createdAt: product.createdAt,
+    }
+    formData.append("productJson", JSON.stringify(obj));
+    formData.append("files", product.images);
+    //#endregion
+
+    const handleSubmit = async () => {
+        try {
+            await http.post(api.CreateProduct, formData, config);
+            setSuccess(true);
+        } catch (err) {
+            navigate("/")
+        }
+    }
+    useEffect(() => {
+        if (success === true) {
+            navigate("/admin/products")
+        }
+    }, [success])
+
+
     return (
         <div className="home">
             <AdminSidebar id={2} />
             <div className="homeContainer">
                 <AdminNavbars title="Create Category" />
                 <div className="create sm md">
-                    <div className="left">
-                        <img src={file ? URL.createObjectURL(file) : require('../../../../assets/images/avatar-1577909_1280.webp')} alt="" />
-                    </div>
                     <div className="right">
                         <Container>
                             <Paper>
                                 <Grid container spacing={2}>
-                                    {inputs.map(input => (
-                                        <Grid item xs={12} md={12} sx={{ margin: 0.5 }} key={input.id}>
-                                            <TextField label={input.label} type={input.type} fullWidth size="small" placeholder={input.placeholder} name={input.name}></TextField>
-                                        </Grid>
-                                    ))}
+                                    {/* productName  */}
                                     <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
-                                        <TextField label="Long Description" type="text" fullWidth size="small" name="longdescription" placeholder="......" multiline
-                                        ></TextField>
+                                        <TextField
+                                            fullWidth size="small"
+                                            label="Product Name"
+                                            id="outlined-start-adornment"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">
+                                                    {hasError("productName") ?
+
+                                                        <CloseIcon className="icon-close" fontSize="medium" style={{ color: 'red' }} />
+                                                        :
+                                                        <CheckIcon className="icon-check" fontSize="medium" style={{ color: green[500] }} />
+                                                    }
+                                                </InputAdornment>,
+                                            }}
+                                            error={hasError("productName")}
+                                            name="productName"
+                                            placeholder="Product Name"
+                                            onChange={handleChange}
+                                        />
+                                        {hasError("productName") ?
+                                            (
+                                                <FormHelperText id="outlined-weight-helper-text" className="text">
+                                                    <ErrorIcon fontSize="small" />
+                                                    {validation.errors.productName[0]}
+                                                </FormHelperText>
+                                            )
+                                            :
+                                            null
+                                        }
                                     </Grid>
+
+
+                                    {/* quantity */}
+                                    <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
+                                        <TextField
+                                            fullWidth size="small"
+                                            label="Quantity"
+                                            id="outlined-start-adornment"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">
+                                                    {hasError("quantity") ?
+
+                                                        <CloseIcon className="icon-close" fontSize="medium" style={{ color: 'red' }} />
+                                                        :
+                                                        <CheckIcon className="icon-check" fontSize="medium" style={{ color: green[500] }} />
+                                                    }
+                                                </InputAdornment>,
+                                            }}
+                                            type="number"
+                                            error={hasError("quantity")}
+                                            name="quantity"
+                                            onChange={handleChange}
+                                            placeholder="0"
+                                        />
+                                        {hasError("quantity") ?
+                                            (
+                                                <FormHelperText id="outlined-weight-helper-text" className="text">
+                                                    <ErrorIcon fontSize="small" />
+                                                    {validation.errors.quantity[0]}
+                                                </FormHelperText>
+                                            )
+                                            :
+                                            null
+                                        }
+                                    </Grid>
+
+                                    {/* price */}
+                                    <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
+                                        <TextField
+                                            fullWidth size="small"
+                                            label="Price"
+                                            id="outlined-start-adornment"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">
+                                                    {hasError("price") ?
+
+                                                        <CloseIcon className="icon-close" fontSize="medium" style={{ color: 'red' }} />
+                                                        :
+                                                        <CheckIcon className="icon-check" fontSize="medium" style={{ color: green[500] }} />
+                                                    }
+                                                </InputAdornment>,
+                                            }}
+                                            error={hasError("price")}
+                                            type="number"
+                                            name="price"
+                                            onChange={handleChange}
+                                        />
+                                        {hasError("price") ?
+                                            (
+                                                <FormHelperText className="text">
+                                                    <ErrorIcon fontSize="small" />
+                                                    {validation.errors.price[0]}
+                                                </FormHelperText>
+
+                                            )
+                                            :
+                                            null
+                                        }
+                                    </Grid>
+
+                                    {/* categories */}
                                     <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
                                         <Box sx={{ minWidth: 120 }}>
-                                            <FormControl fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                            <FormControl fullWidth fontSize="small">
+                                                <InputLabel id="demo-simple-select-label" error={cate === true}>Category</InputLabel>
                                                 <Select
                                                     labelId="demo-simple-select-label"
                                                     id="demo-simple-select"
-                                                    value={cate}
+                                                    value={product.categoryId}
                                                     label="Category"
-                                                    onChange={handleChangeCate}
+                                                    name="categoryId"
+                                                    error={cate === true}
+                                                    onChange={handleChange}
                                                 >
-                                                    <MenuItem value={10}>Ten</MenuItem>
-                                                    <MenuItem value={20}>Twenty</MenuItem>
-                                                    <MenuItem value={30}>Thirty</MenuItem>
+                                                    {categories.map(categories => (
+                                                        <MenuItem key={categories.categotyId} value={categories.categotyId}>{categories.categotyName}</MenuItem>
+                                                    ))}
                                                 </Select>
                                             </FormControl>
+                                            {cate === true ?
+                                                (
+                                                    <FormHelperText className="text">
+                                                        <ErrorIcon fontSize="small" />
+                                                        categories can not blank
+                                                    </FormHelperText>
+                                                )
+                                                :
+                                                null
+                                            }
                                         </Box>
                                     </Grid>
+
+                                    {/* Roles */}
                                     <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
-                                        <Stack direction="row" spacing={2}>
-                                            <Button variant="contained" component="label">
+                                        <Box sx={{ minWidth: 120 }}>
+                                            <FormControl fullWidth fontSize="small">
+                                                <InputLabel id="demo-simple-select-label" error={role === true}>Roles</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={product.roleId}
+                                                    label="Roles"
+                                                    name="roleId"
+                                                    error={role === true}
+                                                    onChange={handleChange}
+                                                >
+                                                    {roles.map(roles => (
+                                                        <MenuItem key={roles.roleId} value={roles.roleId}>{roles.roleName}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                            {role === true ?
+                                                (
+                                                    <FormHelperText className="text">
+                                                        <ErrorIcon fontSize="small" />
+                                                        Roles can not blank
+                                                    </FormHelperText>
+                                                )
+                                                :
+                                                null
+                                            }
+                                        </Box>
+                                    </Grid>
+
+
+                                    {/* upload image */}
+                                    <Grid item xs={12} md={12} sx={{ margin: 0.5 }} >
+                                        <Stack direction="row" spacing={2} >
+                                            <Button variant="contained" component="label" >
                                                 Upload Images
-                                                <input hidden accept="image/*" id="file" type="file" onChange={e => setFile(e.target.files[0])} />
+                                                <input hidden accept="image/*" id="file" name="images" type="file" onChange={handleImg} />
                                             </Button>
                                         </Stack>
                                     </Grid>
+
+                                    <Grid item xs={12} md={12} sx={{ margin: 0.5 }} className="image">
+                                        <img src={product.images ? URL.createObjectURL(product.images) : require('../../../../assets/images/no-image-icon-0.jpg')} alt="" />
+                                        {img === true ?
+                                            (
+                                                <FormHelperText className="text">
+                                                    <ErrorIcon fontSize="small" />
+                                                    image can not blank
+                                                </FormHelperText>
+                                            )
+                                            :
+                                            null
+                                        }
+                                    </Grid>
+
                                     <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
                                         <FormControl>
                                             <FormLabel id="demo-controlled-radio-buttons-group">Product Status</FormLabel>
                                             <RadioGroup
                                                 aria-labelledby="demo-controlled-radio-buttons-group"
-                                                name="controlled-radio-buttons-group"
-                                                value={value}
+                                                name="ProductEnable"
+                                                value={product.ProductEnable}
                                                 onChange={handleChange}>
-                                                <FormControlLabel value="0" control={<Radio />} label="IN STOCK" />
-                                                <FormControlLabel value="1" control={<Radio />} label="OUT OF STOCK" />
+                                                <FormControlLabel value={true} control={<Radio />} label="Turn on" />
+                                                <FormControlLabel value={false} control={<Radio />} label="Turn off" />
                                             </RadioGroup>
                                         </FormControl>
                                     </Grid>
 
-                                    <Grid item>
-                                        <Button sx={{ marginLeft: 40, marginBottom: 1 }} variant="contained">Create</Button>
-                                        <Button sx={{ marginLeft: 1, marginBottom: 1 }} variant="contained" color="error"
-                                            onClick={() => { navigate("/admin/products") }} >Back</Button>
+                                    <Grid item xs={12} md={12} >
+                                        <Button className="btn-create" variant="contained" onClick={handleSubmit} disabled={check()}
+                                        >Create</Button>
+                                        <Button className="btn-back" variant="contained" color="error"
+                                            onClick={() => { navigate("/admin/product") }} >Back</Button>
                                     </Grid>
                                 </Grid>
                             </Paper>
