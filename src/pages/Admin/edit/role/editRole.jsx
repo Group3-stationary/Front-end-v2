@@ -18,10 +18,12 @@ import { green } from "@mui/material/colors";
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import UpdateSuccessDialog from "../../../components/Admin/dialog/updateSuccess";
 
 function EditRole(props) {
     let navigate = useNavigate();
     const dispatch = useDispatch();
+    const [success, setSuccess] = useState(false);
     const [isOpen, setOpenDialog] = useState(false);
     const [checkName, setCheckName] = useState(false);
 
@@ -33,14 +35,6 @@ function EditRole(props) {
     });
 
     //#region call api roles
-    const getAllRoles = async () => {
-        try {
-            const res = await http.get(api.GetAllRoles);
-            dispatch(RoleGetAll(res.data));
-        } catch (err) {
-            navigate("/")
-        }
-    }
 
     const roles = useSelector((state) => state.roles.roles);
     //#endregion
@@ -116,13 +110,8 @@ function EditRole(props) {
     //#endregion
 
     const handleEdit = async () => {
-        try {
-            await http.put(api.EditRoles, role);
-            getAllRoles();
-            setOpenDialog(false);
-        } catch (err) {
-            navigate("/")
-        }
+        setSuccess(true);
+        await http.put(api.EditRoles, role);
     }
 
 
@@ -137,10 +126,12 @@ function EditRole(props) {
         }))
         setOpenDialog(false)
     }
-    console.log(props.role.name);
     return (
         <div>
             <Button className="editButton" variant="outlined" onClick={handleOpen}>Edit</Button>
+            {success === true ?
+                <UpdateSuccessDialog success={true} />
+                :
             <Dialog open={isOpen} maxWidth="sm" fullWidth>
                 <DialogTitle textAlign="center">Create New Category</DialogTitle>
                 <Grid
@@ -196,6 +187,7 @@ function EditRole(props) {
 
                 </Grid>
             </Dialog>
+}
         </div>
     )
 }

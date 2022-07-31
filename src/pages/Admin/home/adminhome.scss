@@ -1,7 +1,7 @@
 .homeAdmin{
     display: flex;
     .homeAdminContainer{
-        flex: 85%;
+        flex: 84%;
         .widgets, .charts{
             display: flex;
             padding: 10px;
@@ -16,7 +16,7 @@
 @media screen and (max-width: 1000px) {
     .homeAdmin{
         display: flex;
-        .homeContainer{
+        .homeAdminContainer{
             flex: 70%;
 
             .widgets, .charts{
@@ -33,8 +33,8 @@
 @media screen and (max-width: 750px) {
     .homeAdmin{
         display: flex;
-        .homeContainer{
-            flex: 40%;
+        .homeAdminContainer{
+            flex: 60%;
             .widgets, .charts{
                 display: flex;
                 flex-direction: column;
@@ -50,7 +50,7 @@
 @media screen and (max-width: 500px) {
     .homeAdmin{
         display: flex;
-        .homeContainer{
+        .homeAdminContainer{
             flex: 40%;
             .widgets, .charts{
                 display: flex;

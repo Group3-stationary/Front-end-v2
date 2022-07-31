@@ -1,9 +1,9 @@
-.home{
+.Orderhome{
     display: flex;
-    .homeContainer{
+    .OrderhomeContainer{
         flex: 85%;
 
-        .btn-create{
+        .btn-create-order{
             padding-top: 10px;
             padding-left: 20px;
         }
@@ -11,11 +11,11 @@
 }
 
 @media screen and (max-width: 1000px) {
-    .home{
+    .Orderhome{
         display: flex;
-        .homeContainer{
+        .OrderhomeContainer{
             flex: 70%;
-            .btn-create{
+            .btn-create-order{
                 padding-top: 10px;
                 padding-left: 20px;
             }
@@ -23,11 +23,11 @@
     }  
 }
 @media screen and (max-width: 750px) {
-    .home{
+    .Orderhome{
         display: flex;
-        .homeContainer{
+        .OrderhomeContainer{
             flex: 40%;
-            .btn-create{
+            .btn-create-order{
                 padding-top: 10px;
                 padding-left: 20px;
             }
@@ -35,11 +35,11 @@
     }    
 }
 @media screen and (max-width: 500px) {
-    .home{
+    .Orderhome{
         display: flex;
-        .homeContainer{
+        .OrderhomeContainer{
             flex: 40%;
-            .btn-create{
+            .btn-create-order{
                 padding-top: 10px;
                 padding-left: 20px;
             }

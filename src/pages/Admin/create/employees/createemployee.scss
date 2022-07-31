@@ -6,6 +6,18 @@
         .create{
             display: flex;
             padding-top: 30px;
+            .btn-create-emp{
+                margin-left: 40%;
+                margin-bottom: 5px;
+                width: 100px;
+                height: 40px;
+            }
+            .btn-back-emp{
+                margin-left: 5px;
+                margin-bottom: 5px;
+                width: 100px;
+                height: 40px;
+            }
         }
     }
 }
@@ -18,19 +30,17 @@
             padding-top: 30px;
             .create{
                 display: flex;
-                .left{
-                    flex:20%;
-                    text-align: center;
-                    margin-top: 200px;
-                    img{
-                        width: 150px;
-                        height: 150px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                    }
+                .btn-create-emp{
+                    margin-left: 30%;
+                    margin-bottom: 5px;
+                    width: 100px;
+                    height: 40px;
                 }
-                .right{
-                    flex:85%;           
+                .btn-back-emp{
+                    margin-left: 5px;
+                    margin-bottom: 5px;
+                    width: 100px;
+                    height: 40px;
                 }
             }           
         }
@@ -44,20 +54,17 @@
             .create{
                 display: flex;
                 flex-direction: column;
-                .left{
-                    flex:20%;
-                    text-align: center;
-                    margin-top: 20px;
-                    margin-bottom: 20px;
-                    img{
-                        width: 150px;
-                        height: 150px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                    }
+                .btn-create-emp{
+                    margin-left: 20%;
+                    margin-bottom: 5px;
+                    width: 100px;
+                    height: 40px;
                 }
-                .right{
-                    flex:85%;           
+                .btn-back-emp{
+                    margin-left: 5px;
+                    margin-bottom: 5px;
+                    width: 100px;
+                    height: 40px;
                 }
             }
         }
@@ -70,20 +77,17 @@
             flex: 40%;
             .create{
                 display: flex;
-                .left{
-                    flex:20%;
-                    text-align: center;
-                    margin-top: 200px;
-                    img{
-                        width: 150px;
-                        height: 150px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                    }
+                .btn-create-emp{
+                    margin-left: 30%;
+                    margin-bottom: 5px;
+                    width: 100px;
+                    height: 40px;
                 }
-                .right{
-                    flex:85%;
-                    width: 99%;          
+                .btn-back-emp{
+                    margin-left: 5px;
+                    margin-bottom: 5px;
+                    width: 100px;
+                    height: 40px;
                 }
             }
         }

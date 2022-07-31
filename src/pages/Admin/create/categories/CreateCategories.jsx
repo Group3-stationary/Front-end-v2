@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import api from "../../../../api/api";
 import http from "../../../../api/client";
 import { CategoriesGetAll } from "../../../../redux/category/category.action";
+import SuccessDialog from "../../../components/Admin/dialog/createSuccess";
 
 const CreateCategory = () => {
     let navigate = useNavigate();
@@ -119,11 +120,6 @@ const CreateCategory = () => {
             navigate("/")
         }
     }
-    useEffect(() => {
-        if (success === true) {
-            navigate("/admin/categories")
-        }
-    }, [success])
     return (
         <div className="home">
             <AdminSidebar id={1} />
@@ -131,6 +127,9 @@ const CreateCategory = () => {
                 <AdminNavbars title="Create Categories" />
                 <div className="create">
                     <Container>
+                    {success === true?
+                        <SuccessDialog page="categories" success={true}/>
+                        :
                         <Paper>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
@@ -187,13 +186,14 @@ const CreateCategory = () => {
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={12} md={12} >
-                                    <Button className="btn-create" variant="contained" disabled={check()} onClick={handleCreate}>Create</Button>
-                                    <Button className="btn-back" variant="contained" color="error"
+                                <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
+                                    <Button className="btn-create-cate" variant="contained" disabled={check()} onClick={handleCreate}>Create</Button>
+                                    <Button className="btn-back-cate" variant="contained" color="error"
                                         onClick={() => { navigate("/admin/categories") }} >Back</Button>
                                 </Grid>
                             </Grid>
                         </Paper>
+                    }
                     </Container>
                 </div>
             </div>

@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-    Dialog, 
+    Dialog,
     DialogTitle,
     TextField,
     FormControl,
@@ -9,98 +9,145 @@ import {
     Button,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
+    FormHelperText,
+    FormLabel,
+    FormControlLabel,
+    Radio,
+    Box,
+    RadioGroup
 } from "@mui/material";
+import ErrorIcon from '@mui/icons-material/Error';
 import { GetAllEmployee } from "../../../../redux/epmloyee/employee.action";
-import {useDispatch,useSelector} from "react-redux";
-import axios from "axios";
-import API from "../../../../api/api";
-
-function EditEmployee(props){
-
-    //Call API
+import { useDispatch, useSelector } from "react-redux";
+import http from "../../../../api/client";
+import api from "../../../../api/api";
+import { useNavigate } from "react-router-dom";
+import validate from "validate.js";
+import UpdateSuccessDialog from "../../../components/Admin/dialog/updateSuccess";
+function EditEmployee(props) {
+    const [role, setRole] = useState(false);
+    const [sup, setSupRole] = useState(false);
+    let navigate = useNavigate();
     const dispatch = useDispatch();
-    const api = axios.create({
-        baseURL: API.GetAllEmployee,
-    })
-        
-    const getAllEmployee = async() => {
-        const res = await api.get("/Employees");
-        dispatch(GetAllEmployee(res.data))
-    }
-
-    //Birthday
-    const [birthday, setBirthday] = useState(props.employee.birthday.substring(0, 10))
-
-    const handleChangeBirthday = (e) => {
-        setBirthday(e.target.value)
-        setEmployee((pre)=> ({
-            ...pre,
-            Birthday: birthday
-        }))
-    }
-
-    //Role
-    const [role, setRole] = useState(props.employee.roles)
-
-    const handleChangeRole = (e) => {
-        setRole(e.target.value)
-        setEmployee((pre) => ({
-            ...pre,
-            Role: e.target.value
-        }))
-
-    }
-
-    //Superior
-    const superior = useSelector((state) => state.employee)
-    
-    const handleChangeSuperior = (e) => {
-        setEmployee((pre) => ({
-            ...pre,
-            Superiors: e.target.value
-        }))
-    }
-
-    //Department
-
-    const handleChangeDepartment = (e) => {
-        setEmployee((pre) => ({
-            ...pre,
-            Department: e.target.value
-        }))
-    }
-    
-    //State Employee
+    const [checkSup, setCheckSup] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const date = new Date();
+    //#region Tao product state de update
     const [employee, setEmployee] = useState({
         EmployeeId: props.employee.id,
         EmployeeName: props.employee.name,
         Email: props.employee.email,
         Address: props.employee.address,
+        Phone: props.employee.phone,
+        Gender: props.employee.gender,
         Birthday: props.employee.birthday,
-        Department: "Engineer",
-        Phone: "",
-        Superiors: 1,
-        IsAdmin: true,
-        Password: "",
-        Role: props.employee.role
-    })
+        Password: props.employee.pass,
+        Department: props.employee.department,
+        Superiors: props.employee.superiors,
+        RoleId: props.employee.idRole,
+        IsAdmin: props.employee.isAdmin,
+        Budget: props.employee.budget,
+        CreateAt: props.employee.createAt,
+        UpdatedAt: date,
+    });
+    //#endregion
 
-    const handleChange = (e)=>{
-        setEmployee(preItem=>({
-            ...preItem,
-            [e.target.name]:e.target.type === "checkbox" ?e.target.checked: e.target.value
-        }))
+    //#region  Validation
+    const [validation, setValidation] = useState({
+        touched: {},
+        errors: {},
+        isvalid: false,
+    });
+    useEffect(() => {
+        const schema = {
+            Superiors: {
+                presence: {
+                    allowEmpty: false,
+                    message: "^Employee name is required",
+                },
+                length: {
+                    minimum: 8,
+                    message: "^Employee name must be greater than 8 characters",
+                },
+            },
+        };
+        const errors = validate.validate(employee, schema);
+        setValidation((pre) => ({
+            ...pre,
+            isvalid: errors ? false : true,
+            errors: errors || {},
+        }));
+
+    }, [employee]);
+    const handleChange = (event) => {
+        if (event.target.name != "IsAdmin") {
+            setEmployee((preState) => ({
+                ...preState,
+                [event.target.name]:
+                    event.target.type === "checkbox"
+                        ? event.target.checked
+                        : event.target.value,
+            }));
+        } else if (event.target.name === "IsAdmin") {
+            let admin;
+            if (event.target.value === "true") {
+                admin = true;
+            } else {
+                admin = false;
+            }
+            setEmployee((preState) => ({
+                ...preState,
+                IsAdmin: admin
+            }));
+        }
+        setValidation((pre) => ({
+            ...pre,
+            touched: {
+                ...pre.touched,
+                [event.target.name]: true,
+            },
+        }));
+    };
+    const hasError = (field) => {
+        return validation.touched[field] && validation.errors[field] ? true : false;
+    };
+
+    useEffect(() => {
+        if (employee.Superiors === "") {
+            setCheckSup(true);
+        } else {
+            setCheckSup(false);
+        }
+        check();
+       
+    }, [employee.Superiors, validation])
+    const check = () => {
+        if (validation.isvalid === false) {
+            return true;
+        } else if (checkSup === true) {
+            return true;
+        }
+        return false;
     }
+    //#endregion
 
     //Role Selector
     const roles = useSelector((state) => state.roles.roles)
-    //HandleEdit
-    const handleEdit = async() => {
-        const res = await api.put("/UpdateEmployee", employee)
-        setOpenDialog(false)
-        getAllEmployee()
+    //#region HandleEdit
+    const handleEdit = async () => {
+        try {
+            await http.put(api.EditEmployee, employee);
+            setSuccess(true);
+        } catch (err) {
+            
+        }
     }
+
+    const employees = useSelector((state) => state.employees.employees);
+    //#endregion
+
+    //#region log
     const [isOpen, setOpenDialog] = useState(false);
 
     const handleOpen = () => {
@@ -115,118 +162,153 @@ function EditEmployee(props){
             Email: props.employee.email,
             Address: props.employee.address,
             Birthday: props.employee.birthday,
-            Department: "Engineer",
+            Password: props.employee.pass,
+            Department: props.employee.department,
             Phone: props.employee.phone,
-            Superiors: 1,
-            IsAdmin: true,
-            Password: "",
-            Role: props.employee.role
+            Superiors: props.employee.superiors,
+            RoleId: props.employee.idRole,
+            IsAdmin: props.employee.isAdmin,
+            Budget: props.employee.budget,
         }))
         setOpenDialog(false)
     }
+    //#endregion
+
+    //#region super
+    const [superior, setSuperior] = useState([])
+
+    const handleRoleIndex = (event) => {
+        const index = roles.findIndex(e => e.roleId === event.target.value)
+        if (roles[index - 1] != undefined) {
+            const superiors = employees.filter(emp => emp.roleId === roles[index - 1].roleId)
+            setSuperior([...superiors])
+        } else {
+            setSuperior([])
+        }
+
+    }
+
+    const handleReset = () => {
+        setEmployee(pre => ({
+            ...pre,
+            Superiors: ""
+        }))
+    }
+    //#endregion
     return (
         <div>
-        <Button className="editButton" variant="outlined" onClick={handleOpen}>Edit</Button> 
-        <Dialog open={isOpen} maxWidth="lg" fullWidth>
-            <DialogTitle textAlign="center">Create New Employee</DialogTitle>
-            <Grid
-            container
-            p={4}
-            spacing={2}
-            
-            >
-                <Grid item md={4}>
-                    <TextField label="Employee ID" variant="outlined" className="InputField" fullWidth 
-                    inputProps={{readOnly: true}} defaultValue={props.employee.id}></TextField>
-                </Grid>
-                <Grid item md={4}>
-                    <TextField label="Name" variant="outlined" className="InputField" name="EmployeeName" fullWidth defaultValue={props.employee.name} 
-                    onChange={handleChange}></TextField>
-                </Grid>
-                <Grid item md={4}>
-                    <TextField label="Email" variant="outlined" className="InputField" fullWidth defaultValue={props.employee.email}
-                    onChange={handleChange} name="Email"></TextField>
-                </Grid>
-                <Grid item md={4}>
-                    <TextField label="Address" variant="outlined" className="InputField" fullWidth defaultValue={props.employee.address}
-                    onChange={handleChange} name="Address"></TextField>
-                </Grid>
-                <Grid item md={4}>
-                    <TextField label="Phone" variant="outlined" className="InputField" fullWidth defaultValue={props.employee.phone}
-                    onChange={handleChange} name="Phone"></TextField>
-                </Grid>
-                <Grid item md={4}>
-                <TextField
-                id="date"
-                label="Birthday"
-                type="date"
-                defaultValue={birthday}
-                fullWidth
-                onChange={handleChangeBirthday}
-                />
-                </Grid>
-                <Grid item md={4}>
-                    <TextField label="Password" variant="outlined" className="InputField" fullWidth type="password"
-                    onChange={handleChange} name="Password"></TextField>
-                </Grid>
-                <Grid item md={4}>
-                    <TextField label="Gender" variant="outlined" className="InputField" fullWidth defaultValue={props.employee.gender}></TextField>
-                </Grid>
-                <Grid item md={4}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Department</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select1"
-                        value={"Engineer"}
-                        label="Department"
-                        onChange={handleChangeDepartment}
-                        >
-                            <MenuItem value={"Engineer"}>Engineer</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item md={4}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Superior</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select2"
-                        value={10}
-                        label="Superior"
-                        onChange={handleChangeSuperior}                      
-                        >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item md={4}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Role</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select3"
-                        value={role}
-                        label="Role" 
-                        onChange={handleChangeRole}                     
-                        >
-                            {roles.map(role => (
-                                <MenuItem value={role.roleName} key={role.roleId}>{role.roleName}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>               
-                <Grid container item md={12} direction="row" justifyContent="center" alignItems="center">                  
-                    <Button variant="contained" sx={{marginRight: "20px", width: "250px"}} onClick={handleEdit}>Update</Button>
-                    <Button variant="outlined" sx={{width: "250px"}} onClick={handleClose}>Cancle</Button>
-                </Grid>
-                
-            </Grid>
-        </Dialog>
+            <Button className="editButton" variant="outlined" onClick={handleOpen}>Edit</Button>
+            {success === true ?
+                <UpdateSuccessDialog success={true} />
+                :
+                <Dialog open={isOpen} maxWidth="lg" fullWidth>
+                    <DialogTitle textAlign="center">Update Employee</DialogTitle>
+                    <Grid
+                        container
+                        p={4}
+                        spacing={2}
+                    >
+                        {/* employee id */}
+                        <Grid item md={4}>
+                            <TextField label="Employee ID" variant="outlined" className="InputField" fullWidth
+                                inputProps={{ readOnly: true }} defaultValue={employee.EmployeeId} />
+                        </Grid>
+
+                        {/* Department*/}
+                        <Grid item md={4}>
+                            <TextField label="Department" variant="outlined" className="InputField" fullWidth
+                                name="Department" value={employee.Department} onChange={handleChange} />
+                        </Grid>
+
+                        {/* isAdmin  */}
+                        <Grid item md={4}>
+                            <FormControl>
+                                <FormLabel >Is Admin</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-controlled-radio-buttons-group"
+                                    name="IsAdmin"
+                                    value={employee.IsAdmin}
+                                    onChange={handleChange}>
+                                    <FormControlLabel value={true} control={<Radio />} label="True" />
+                                    <FormControlLabel value={false} control={<Radio />} label="False" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                        {/* role  */}
+                        <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
+                            <Box sx={{ minWidth: 120 }}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        value={employee.RoleId}
+                                        name="RoleId"
+                                        label="Role"
+                                        onChange={(e) => {
+                                            handleReset()
+                                            handleChange(e)
+                                            handleRoleIndex(e)
+                                        }}
+                                    >
+                                        {roles.map(roles => (
+                                            <MenuItem key={roles.roleId} value={roles.roleId}>{roles.roleName}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            {role === true ?
+                                (
+                                    <FormHelperText className="text">
+                                        <ErrorIcon fontSize="small" />
+                                        Roles can not blank
+                                    </FormHelperText>
+                                )
+                                :
+                                null
+                            }
+                        </Grid>
+
+                        {/* superior  */}
+                        {superior.length !== 0 ? (
+                            <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel id="demo-simple-select-label">Superior</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        value={employee.Superiors}
+                                        name="Superiors"
+                                        label="Superior"
+                                        onChange={(e) => {
+                                            handleChange(e)
+                                        }}
+                                    >
+                                        {superior.map(sup => {
+                                            return (
+                                                <MenuItem key={sup.employeeId} value={sup.employeeId}>{sup.employeeName}</MenuItem>
+                                            )
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                {checkSup === true ?
+                                    (
+                                        <FormHelperText id="outlined-weight-helper-text" className="text">
+                                            <ErrorIcon fontSize="small" />
+                                            This superiors can not blank
+                                        </FormHelperText>
+                                    )
+                                    :
+                                    null
+                                }
+                            </Grid>
+                        ) : null}
+                        <Grid container item md={12} direction="row" justifyContent="center" alignItems="center">
+                            <Button variant="contained" sx={{ marginRight: "20px", width: "250px" }} disabled={check()} onClick={handleEdit}>Update</Button>
+                            <Button variant="outlined" sx={{ width: "250px" }} onClick={handleClose}>Cancle</Button>
+                        </Grid>
+                    </Grid>
+                </Dialog>
+            }
         </div>
     )
 }
