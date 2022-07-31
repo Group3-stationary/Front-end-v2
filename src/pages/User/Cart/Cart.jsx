@@ -9,7 +9,7 @@ import { addCart, delCart, delAllCart, Clear } from "../../../redux/cart/cart.ac
 import http from "../../../api/client";
 import api from "../../../api/api";
 import { GetProfile } from "../../../redux/profile/profile.action";
-
+import baseURL from "../../../baseurl";
 
 const Cart = () => {
   const state = useSelector((state) => state.cart);
@@ -97,7 +97,7 @@ const Cart = () => {
                           <div key={product.productId}>
                             <div className="row mb-4 d-flex justify-content-between align-items-center">
                               <div className="col-md-2 col-lg-2 col-xl-2">
-                                <img src={"http://localhost:8832/" + product.featureImgPath} className="img-fluid rounded-3" alt="Cotton T-shirt" />
+                                <img src={baseURL + product.featureImgPath} className="img-fluid rounded-3" alt="Cotton T-shirt" />
                               </div>
                               <div className="col-md-3 col-lg-3 col-xl-3">
                                 <h6 className="text-black mb-0">{product.productName}</h6>

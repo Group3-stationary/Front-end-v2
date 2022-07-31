@@ -83,7 +83,6 @@ const AdminHome = () => {
             }
         }
     })
-    console.log("a", orderItems);
     return (
         <div className="homeAdmin">
             <Sidebar id={0} />

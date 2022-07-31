@@ -13,6 +13,7 @@ import DeleteSuccesDialog from "../../dialog/deleteSuccess";
 import EditOrder from "../../../../Admin/edit/orders/editOrder";
 import DetailsOrder from "../../../../Admin/details/orders/DeatailOrder";
 import { RoleGetAll } from "../../../../../redux/role/role.action";
+import { GetProfile } from "../../../../../redux/profile/profile.action";
 
 const DataOrders = () => {
   const [success, setSuccess] = useState(false);
@@ -86,11 +87,17 @@ const DataOrders = () => {
     const resRoles = await http.get(api.GetAllRoles);
     dispatch(RoleGetAll(resRoles.data));
   }
+  // API profile
+  const getProfile = async () => {
+  const resEmp = await http.get(api.GetProfileByIdEmp + user.employeeID);
+    dispatch(GetProfile(resEmp.data));
+  }
 
   useEffect(() => {
     getAllOrder();
     getAllEmployee();
     getAllRole();
+    getProfile();
   }, []);
 
   const user = useSelector((state) => state.user.currentUser);
@@ -100,6 +107,8 @@ const DataOrders = () => {
   const orders = useSelector((state) => state.orders.orders);
   //select employees
   const employees = useSelector((state) => state.employees.employees);
+  //select profile
+  const profiles = useSelector((state) => state.profile.profile);
   //#endregion
 
 
@@ -121,26 +130,17 @@ const DataOrders = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            {user.userRoles === 1 && params.row.status == "Approved" ?
+            {user.userRoles === 2 && params.row.status == "Approved" ?
               <EditOrder orders={params.row} statusApp="Acceptance" statusRee="Disagree" />
               :
               null
             }
-            {user.userRoles === 2 && params.row.status == "Waiting for approval" ?
+            {user.userRoles === 5 && params.row.status == "Waiting for approval" ?
               <EditOrder orders={params.row} statusApp="Approved" statusRee="Rejected" />
               :
               null
             }
             <DetailsOrder orders={params.row} />
-            {/* {params.row.status == "Rejected" || params.row.status == "Disagree"?
-              <Button className="deleteButton" variant="outlined" onClick={() => {
-                setIsDelete(true)
-                setId(params.row.id)
-              }
-              }>Delete</Button>
-              :
-              null
-            } */}
           </div>
 
 
@@ -153,14 +153,22 @@ const DataOrders = () => {
   let Orlist = [];
 
   const empList = employees.filter(emp => emp.superiors === user.employeeID)
+  
+  
+  for (let i = 0; i < orders.length; i++) {
+    if(orders[i].employeeId === user.employeeID){
+      Orlist.push(orders[i]);
+    }
+  }
 
-  empList.forEach(emp => {
-    orders.forEach(order => {
-      if (order.employeeId === emp.employeeId) {
-        Orlist.push(order)
+  for (let i = 0; i < empList.length; i++) {
+    for (let j = 0; j < orders.length; j++) {
+      if (empList[i].employeeId === orders[j].employeeId) {
+         Orlist.push(orders[j]);
       }
-    })
-  })
+    }
+  }
+ 
 
 
   const orderRows = Orlist.map((order) => {

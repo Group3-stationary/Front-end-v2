@@ -14,7 +14,7 @@ import { RoleGetAll } from "../../../../../redux/role/role.action";
 import { Alert, AlertTitle, CircularProgress, Dialog, DialogTitle, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteSuccesDialog from "../../dialog/deleteSuccess";
-
+import baseURL from "../../../../../baseurl";
 
 
 const DataProduct = () => {
@@ -210,7 +210,7 @@ const DataProduct = () => {
     }
     let image = null;
     if (item.featureImgPath !== null) {
-      image = "http://localhost:8832/" + item.featureImgPath;
+      image = baseURL + item.featureImgPath;
     }
     return {
       id: item.productId,

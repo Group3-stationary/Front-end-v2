@@ -10,7 +10,7 @@ export const SidebarData = [
       icon: DashboardIcon,
       heading: "Dashboard",
       link: "/admin",
-      role: [{id:1},{id:2},{id:3}]
+      role: [{id:1},{id:2},{id:5}]
     },
     {
       icon: CategoryIcon,
@@ -22,19 +22,19 @@ export const SidebarData = [
       icon: StoreIcon,
       heading: "Products",
       link: "/admin/products",
-      role: [{id:1},{id:3}],
+      role: [{id:1},{id:5}],
     },
     {
       icon: PersonIcon,
       heading: "Employees",
       link: "/admin/employees",
-      role: [{id:1},{id:2},{id:3}],
+      role: [{id:1},{id:2},{id:5}],
     },
     {
       icon: ListAltIcon,
       heading: "Orders",
       link: "/admin/orders",
-      role: [{id:1},{id:2},{id:3}],
+      role: [{id:1},{id:2},{id:5}],
     },
     {
       icon: HowToRegIcon,

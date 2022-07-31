@@ -126,7 +126,6 @@ function EditRole(props) {
         }))
         setOpenDialog(false)
     }
-    console.log(props.role.name);
     return (
         <div>
             <Button className="editButton" variant="outlined" onClick={handleOpen}>Edit</Button>

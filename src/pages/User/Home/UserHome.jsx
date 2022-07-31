@@ -55,6 +55,7 @@ const UserHome = () => {
               </div>
               <div className="center">
                 <ul>
+                  <li onClick={()=>setCateId(0)}><ArrowRightIcon className="icon" /><span>All</span></li>
                   {categories.map(cate=>
                     <li key={cate.categotyId} onClick={()=>setCateId(cate.categotyId)}><ArrowRightIcon className="icon" /><span>{cate.categotyName}</span></li>
                   )}

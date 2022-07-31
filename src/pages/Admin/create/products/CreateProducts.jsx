@@ -14,9 +14,10 @@ import { useNavigate } from "react-router";
 import { green } from "@mui/material/colors";
 import validate from "validate.js";
 import { useDispatch, useSelector } from "react-redux";
+import SuccessDialog from "../../../components/Admin/dialog/createSuccess";
 
 const CreateProduct = () => {
-    const [checkName,setCheckName]= useState(false);
+    const [checkName, setCheckName] = useState(false);
     const [cate, setCate] = useState(false);
     const [img, setImg] = useState(false);
     const [role, setRole] = useState(false);
@@ -35,7 +36,7 @@ const CreateProduct = () => {
         createdAt: date,
         images: "",
     })
- 
+
     //#region  Validation
     const [validation, setValidation] = useState({
         touched: {},
@@ -84,9 +85,9 @@ const CreateProduct = () => {
     }, [product]);
     useEffect(() => {
         let proempname = products.find(e => e.productName === product.productName);
-        if(proempname === undefined){
+        if (proempname === undefined) {
             setCheckName(false);
-        }else{
+        } else {
             setCheckName(true);
         }
         if (product.categoryId !== 0) {
@@ -111,9 +112,9 @@ const CreateProduct = () => {
     const check = () => {
         if (validation.isvalid === false) {
             return true;
-        } else if (checkName === true){
+        } else if (checkName === true) {
             return true;
-        }else if (product.categoryId === 0) {
+        } else if (product.categoryId === 0) {
             return true;
         } else if (product.roleId === 0) {
             return true;
@@ -204,12 +205,6 @@ const CreateProduct = () => {
             navigate("/")
         }
     }
-    useEffect(() => {
-        if (success === true) {
-            navigate("/admin/products")
-        }
-    }, [success])
-
 
     return (
         <div className="ProCrhome">
@@ -217,7 +212,10 @@ const CreateProduct = () => {
             <div className="ProCrhomeContainer">
                 <AdminNavbars title="Create Product" />
                 <div className="create-proCr sm md">
-                <Container>
+                    <Container>
+                        {success === true ?
+                            <SuccessDialog page="products" success={true} />
+                            :
                             <Paper>
                                 <Grid container spacing={2}>
                                     {/* productName  */}
@@ -249,11 +247,11 @@ const CreateProduct = () => {
                                                 </FormHelperText>
                                             )
                                             :
-                                            (checkName === true? 
+                                            (checkName === true ?
                                                 (
                                                     <FormHelperText id="outlined-weight-helper-text" className="text">
-                                                    <ErrorIcon fontSize="small" />
-                                                    This name already exists
+                                                        <ErrorIcon fontSize="small" />
+                                                        This name already exists
                                                     </FormHelperText>
                                                 )
                                                 :
@@ -442,7 +440,8 @@ const CreateProduct = () => {
                                     </Grid>
                                 </Grid>
                             </Paper>
-                        </Container>
+                        }
+                    </Container>
                 </div>
             </div>
         </div>

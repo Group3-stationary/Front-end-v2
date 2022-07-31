@@ -179,11 +179,9 @@ function EditEmployee(props) {
 
     const handleRoleIndex = (event) => {
         const index = roles.findIndex(e => e.roleId === event.target.value)
-        console.log(roles[index - 1])
         if (roles[index - 1] != undefined) {
             const superiors = employees.filter(emp => emp.roleId === roles[index - 1].roleId)
             setSuperior([...superiors])
-            console.log(superior)
         } else {
             setSuperior([])
         }

@@ -39,7 +39,7 @@ const CreateEmployee = () => {
         superiors: "",
         isAdmin: false,
         roleId: "",
-        superiors: "",
+        superiors: "0",
         createdAt: date,
 
     })
@@ -243,7 +243,7 @@ const CreateEmployee = () => {
             await http.post(api.CreateEmployee, employee);
             setSuccess(true);
         } catch (err) {
-            console.log(err);
+            navigate("/")
         }
     }
     //#endregion
@@ -253,14 +253,18 @@ const CreateEmployee = () => {
 
     const handleRoleIndex = (event) => {
         const index = roles.findIndex(e => e.roleId === event.target.value)
-        console.log(roles[index - 1])
-        if (roles[index - 1] != undefined) {
-            const superiors = employees.filter(emp => emp.roleId === roles[index - 1].roleId)
-            setSuperior([...superiors])
-            console.log(superior)
-        } else {
+        if(index !== 1){
+            if (roles[index - 1] != undefined) {
+                const superiors = employees.filter(emp => emp.roleId === roles[index - 1].roleId)
+                setSuperior([...superiors])
+            } else {
+                setSuperior([])
+            }
+        }else {
+            setSupRole(false);
             setSuperior([])
         }
+        
 
     }
     //#endregion
