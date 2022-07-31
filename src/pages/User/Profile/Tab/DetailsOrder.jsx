@@ -8,8 +8,8 @@ import api from "../../../../api/api";
 import http from "../../../../api/client";
 import { GetAllOrderItem } from "../../../../redux/orderItem/orderItem.action";
 import { useDispatch, useSelector } from "react-redux";
-import { GetProfile } from "../../../../redux/profile/profile.action";
 import { ProductGetAll } from "../../../../redux/product/product.action";
+import baseURL from "../../../../baseurl";
 
 function DetailsOrder(props) {
   const [isOpen, setOpenDialog] = useState(false);
@@ -26,7 +26,6 @@ function DetailsOrder(props) {
     getOrderItem();
     getAllProduct();
   }, [])
-  console.log(props.orders)
   const user = useSelector((state) => state.user.currentUser);
   const products = useSelector((state) => state.products.products);
   const orderItem = useSelector((state) => state.orderItem.orderItem);
@@ -78,7 +77,7 @@ function DetailsOrder(props) {
                     <div className="card-body">
                       <div className="row">
                         <div className="col-md-2">
-                          <img src={"http://localhost:8832/"+produc.featureImgPath} className="img-fluid" alt="Phone" />
+                          <img src={baseURL+produc.featureImgPath} className="img-fluid" alt="Phone" />
                         </div>
                         <div className="col-md-2 text-center d-flex justify-content-center align-items-center">
                           <p className="text-muted mb-0">{produc.name}</p>

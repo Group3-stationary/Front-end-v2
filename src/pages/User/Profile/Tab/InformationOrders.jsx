@@ -30,7 +30,6 @@ const InformationOrders = () => {
   //select orders
   const orders = useSelector((state) => state.orders.orders);
   const orList = orders.filter(emp => emp.employeeId === user.employeeID)
-  console.log(orders)
   return (
     <div>
       <Table striped bordered hover>

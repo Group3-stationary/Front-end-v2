@@ -22,7 +22,6 @@ export function* login(loginInfo) {
   try {
     yield put(signInProcessing());
     const res = yield call(callAPILogin, loginInfo);
-    console.log("res: ", res);
     localStorage.setItem("name", res.data.employeeName)
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("refreshToken", res.data.refreshToken);

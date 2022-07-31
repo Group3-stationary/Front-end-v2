@@ -31,6 +31,8 @@ const api = {
 
     ChekPass: "api/Employees/ChangePassword",
 
+    GetAllNotifications: "api/Notifications/Notifications",
+    DeleteNotifications: "api/Notifications/NotificationId?id="
 }
 
 export default api;

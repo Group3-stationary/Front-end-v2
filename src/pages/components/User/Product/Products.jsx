@@ -8,12 +8,14 @@ import { Container } from "@mui/system";
 import { Col, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../../../../redux/cart/cart.action";
+import baseURL from "../../../../baseurl";
 
 const Products = (props) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.products);
   const sta = useSelector((state) => state.products.status);
+  const user = useSelector((state) => state.user.currentUser);
   useEffect(()=>{
       if(sta === "loading"){
         setLoading(true);
@@ -56,12 +58,13 @@ const Products = (props) => {
             {props.cate !== 0?
               proList.map((pro) => {
                 return (
+                pro.roleId === user.userRoles && pro.productEnable === true ?               
                     <Col md={3} sm={6} key={pro.productId}>
                       <div className="product-grid3">
                         <div className="product-image3">
                           <div>
-                            <img className="pic-1" src={ "http://localhost:8832/"+pro.featureImgPath} alt={pro.title} />
-                            <img className="pic-2" src={ "http://localhost:8832/"+pro.featureImgPath} alt={pro.title} />
+                            <img className="pic-1" src={ baseURL+pro.featureImgPath} alt={pro.title} />
+                            <img className="pic-2" src={ baseURL+pro.featureImgPath} alt={pro.title} />
                           </div>
                           <ul className="social">
                             <li><button className="btn-detail"  onClick={()=>addProduct(pro)}><ShoppingCartIcon /></button></li>
@@ -83,18 +86,21 @@ const Products = (props) => {
                           </ul>
                         </div>
                       </div>
-                    </Col>
+                    </Col>    
+                :
+                null
                 );
               })
               :
               products.map((product) => {
                 return (
+                  product.roleId === user.userRoles && product.productEnable === true ?
                     <Col md={3} sm={6} key={product.productId}>
                       <div className="product-grid3">
                         <div className="product-image3">
                           <div>
-                            <img className="pic-1" src={ "http://localhost:8832/"+product.featureImgPath} alt={product.title} />
-                            <img className="pic-2" src={ "http://localhost:8832/"+product.featureImgPath} alt={product.title} />
+                            <img className="pic-1" src={ baseURL+product.featureImgPath} alt={product.title} />
+                            <img className="pic-2" src={ baseURL+product.featureImgPath} alt={product.title} />
                           </div>
                           <ul className="social">
                             <li><button className="btn-detail"  onClick={()=>addProduct(product)}><ShoppingCartIcon /></button></li>
@@ -116,6 +122,8 @@ const Products = (props) => {
                         </div>
                       </div>
                     </Col>
+                  :
+                  null
                 );
               })
             }    

@@ -10,14 +10,14 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { GetAllNotifications } from "../../../../redux/notification/notification.action";
-import axios from "axios";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import Popover from '@mui/material/Popover';
 import Badge from '@mui/material/Badge';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import http from "../../../../api/client";
+import api from "../../../../api/api";
 const UserNavbars = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -36,12 +36,8 @@ const UserNavbars = () => {
   //Call API
   const dispatch = useDispatch()
 
-  const API = axios.create({
-      baseURL: "http://localhost:8832/api/Notifications"
-  })
-
   const getAllNotifications = async() => {
-      const res = await API.get("/Notifications")
+      const res = await http.get(api.GetAllNotifications);
       dispatch(GetAllNotifications(res.data))
   }
 
@@ -61,7 +57,7 @@ const UserNavbars = () => {
   }
 
   const hanldeDeleteNoti = async(id) => {
-    await API.delete(`/NotificationId?id=${id}`)
+    await http.delete(api.DeleteNotifications+id)
     getAllNotifications()
   }
   const state = useSelector((state)=> state.cart)
