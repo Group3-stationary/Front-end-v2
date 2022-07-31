@@ -9,11 +9,14 @@ const INITIAL_STATE = {
         phone: "",
         gender: "",
         birthday: "",
+        password: "",
         department: "",
         superiors: "",
         roleId: "",
         isAdmin: "",
-    }]
+        budget:""
+    }],
+    status: "loading",
 }
 
 const EmployeeReducer = (state = INITIAL_STATE, action) => {
@@ -21,7 +24,8 @@ const EmployeeReducer = (state = INITIAL_STATE, action) => {
         case EmployeeActionType.GetAllEmployee:
             return {
                 ...state,
-                employees: action.payload
+                employees: action.payload,
+                status: "done",
             }
         default:
             return {...state}

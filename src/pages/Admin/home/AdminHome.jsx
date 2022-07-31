@@ -4,27 +4,122 @@ import Navbars from "../../components/Admin/navbar/AdminNavbar";
 import Widget from "../../components/Admin/widget/Widget";
 import Featured from "../../components/Admin/featured/Featured";
 import Chart from "../../components/Admin/chart/Chart";
-const AdminHome = () =>{
-    return(
+import http from "../../../api/client";
+import api from "../../../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { GetAllEmployee } from "../../../redux/epmloyee/employee.action";
+import { GetAllOrder } from "../../../redux/order/order.action";
+import { GetAllOrderItem } from "../../../redux/orderItem/orderItem.action";
+import { ProductGetAll } from "../../../redux/product/product.action";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Grid } from "@mui/material";
+
+const AdminHome = () => {
+
+    //Call API
+    let navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const getAllEmployee = async () => {
+        try {
+            const resEmp = await http.get(api.GetAllEmployee);
+            dispatch(GetAllEmployee(resEmp.data));
+        } catch (err) {
+            navigate("/")
+        }
+    }
+
+    const getAllProduct = async () => {
+        const res = await http.get(api.GetAllProduct);
+        dispatch(ProductGetAll(res.data))
+    }
+
+
+    const getAllOrderDetail = async () => {
+        const res = await http.get(api.GetAllOrderItem);
+        dispatch(GetAllOrderItem(res.data))
+    }
+
+    const getAllOrder = async () => {
+        const resOrders = await http.get(api.GetAllOrder);
+        dispatch(GetAllOrder(resOrders.data));
+    }
+    useEffect(() => {
+        getAllEmployee()
+        getAllOrder()
+        getAllProduct()
+        getAllOrderDetail()
+    }, [])
+
+    const orderDetails = useSelector(state => state.orderItem.orderItem)
+    const orders = useSelector(state => state.orders.orders)
+    const employees = useSelector(state => state.employees.employees)
+    const products = useSelector(state => state.products.products)
+
+    let cost = 0;
+
+    orderDetails.forEach(orderItem => {
+        products.forEach(product => {
+            if (orderItem.productId === product.productId) {
+                cost = cost + (orderItem.quantity * product.price)
+            }
+        })
+    })
+
+    const orderItems = [];
+    orderDetails.forEach(item => {
+        if (orderItems.length === 0) {
+            orderItems.push(item)
+        } else {
+            let check = orderItems.find(e => e.productId === item.productId)
+            if (check === undefined) {
+                orderItems.push(item)
+            } else {
+                check = { ...check, quantity: check.quantity + item.quantity }
+                const index = orderItems.findIndex(o => o.productId === check.productId)
+                orderItems[index] = { ...check }
+            }
+        }
+    })
+    console.log("a", orderItems);
+    return (
         <div className="homeAdmin">
-           <Sidebar id={0}/>
-           <div className="homeAdminContainer">
-                <Navbars title="Home"/>
+            <Sidebar id={0} />
+            <div className="homeAdminContainer">
+                <Navbars title="Home" />
                 <div className="widgets">
-                    <Widget type="user"/>
-                    <Widget type="order"/>
-                    <Widget type="earning"/>
-                    <Widget type="balance"/>
+                    <Widget type="user" amount={employees.length} />
+                    <Widget type="order" amount={orders.length} />
+                    <Widget type="cost" amount={cost} />
                 </div>
                 <div className="charts">
-                    <div className="fea">
-                        <Featured/>
-                    </div>
-                    <div className="chart">
-                        <Chart/>
-                    </div>    
+                    <Grid container spacing={2}>
+                        {orderItems.map(orderItem => {
+                            if(orderItem.productId != 0)
+                            {
+                                const productName = products.find(e => e.productId === orderItem.productId)
+                                let rate = (productName.price * orderItem.quantity) / cost * 100
+                                const x = parseInt(rate)
+                                const y = rate - x
+                                if (y >= 0.5) {
+                                    rate = Math.ceil(rate)
+                                } else {
+                                    rate = Math.floor(rate)
+                                }
+                                const costs = productName.price * orderItem.quantity
+                                return (
+                                    <Grid item md={2} xs={3} key={orderItem.id}>
+                                        <Featured key={orderItem.id} title={productName.productName} rate={rate} cost={costs} />
+                                    </Grid>
+                                )
+                            }                         
+                        })
+                        }
+                    </Grid>
                 </div>
-           </div>
+            </div>
         </div>
     )
 }

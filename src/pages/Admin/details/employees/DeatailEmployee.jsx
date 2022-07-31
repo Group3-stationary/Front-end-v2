@@ -14,7 +14,6 @@ import Moment from 'moment';
 
 function DetailsEmployee(props) {
   const [isOpen, setOpenDialog] = useState(false);
-
   const handleOpen = () => {
     setOpenDialog(true)
   }
@@ -22,7 +21,7 @@ function DetailsEmployee(props) {
   const handleClose = () => {
     setOpenDialog(false)
   }
-  console.log(props.employee.isAdmin);
+
   return (
     <div>
       <Button className="editButton" variant="outlined" onClick={handleOpen}>View</Button>
@@ -58,9 +57,9 @@ function DetailsEmployee(props) {
           <Grid item md={4}>
             <TextField  label="Birthday" variant="outlined" className="InputField"  fullWidth value={Moment(props.employee.birthday).format("L")} InputProps={{readOnly: true}}></TextField>
           </Grid>
-          {/* <Grid item md={4}>
-                    <TextField label="Password" variant="outlined" className="InputField" fullWidth type="password" value={props.employee.id} InputProps={{readOnly: true}} ></TextField>
-                </Grid> */}
+          <Grid item md={4}>
+              <TextField label="Budget" variant="outlined" className="InputField" fullWidth value={props.employee.budget} InputProps={{readOnly: true}} ></TextField>
+          </Grid>
           <Grid item md={4}>
             <TextField label="Department" variant="outlined" className="InputField" fullWidth value={props.employee.department} InputProps={{readOnly: true}} ></TextField>
           </Grid>

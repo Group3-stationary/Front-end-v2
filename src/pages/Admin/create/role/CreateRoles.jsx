@@ -15,6 +15,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from "react-redux";
+import SuccessDialog from "../../../components/Admin/dialog/createSuccess";
 
 const CreateRole = () => {
     let navigate = useNavigate();
@@ -115,72 +116,70 @@ const CreateRole = () => {
     //#region  call api create role
     const handleCreate = async () => {
         try {
-            await http.post(api.CreateRole,role);
+            await http.post(api.CreateRole, role);
             setSuccess(true);
         } catch (err) {
             navigate("/")
         }
     }
-    useEffect(() => {
-        if (success === true) {
-            navigate("/admin/roles")
-        }
-    }, [success])
     //#endregion
     return (
-        <div className="home">
+        <div className="role">
             <AdminSidebar id={5} />
-            <div className="homeContainer">
+            <div className="roleContainer">
                 <AdminNavbars title="Create Role" />
                 <div className="create sm md">
                     <Container>
-                        <Paper>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
-                                    <TextField
-                                        fullWidth size="small"
-
-                                        id="outlined-start-adornment"
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">
-                                                {hasError("roleName") ?
-                                                    <CloseIcon className="icon-close" fontSize="medium" style={{ color: 'red' }} />
-                                                    :
-                                                    <CheckIcon className="icon-check" fontSize="medium" style={{ color: green[500] }} />}
-                                            </InputAdornment>,
-                                        }}
-                                        value={role.roleName}
-                                        label="Role Name"
-                                        name="roleName"
-                                        onChange={handleChange}
-                                    />
-                                    {hasError("roleName") ?
-                                        (
-                                            <FormHelperText id="outlined-weight-helper-text" className="text">
-                                                <ErrorIcon fontSize="small" />
-                                                {validation.errors.roleName[0]}
-                                            </FormHelperText>
-                                        )
-                                        :
-                                        (checkName === true ?
+                        {success === true ?
+                            <SuccessDialog page="roles" success={true} />
+                            :
+                            <Paper>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} md={12} sx={{ margin: 0.5 }}>
+                                        <TextField
+                                            fullWidth size="small"
+                                            id="outlined-start-adornment"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">
+                                                    {hasError("roleName") ?
+                                                        <CloseIcon className="icon-close" fontSize="medium" style={{ color: 'red' }} />
+                                                        :
+                                                        <CheckIcon className="icon-check" fontSize="medium" style={{ color: green[500] }} />}
+                                                </InputAdornment>,
+                                            }}
+                                            value={role.roleName}
+                                            label="Role Name"
+                                            name="roleName"
+                                            onChange={handleChange}
+                                        />
+                                        {hasError("roleName") ?
                                             (
                                                 <FormHelperText id="outlined-weight-helper-text" className="text">
                                                     <ErrorIcon fontSize="small" />
-                                                    This name already exists
+                                                    {validation.errors.roleName[0]}
                                                 </FormHelperText>
                                             )
                                             :
-                                            null
-                                        )
-                                    }
+                                            (checkName === true ?
+                                                (
+                                                    <FormHelperText id="outlined-weight-helper-text" className="text">
+                                                        <ErrorIcon fontSize="small" />
+                                                        This name already exists
+                                                    </FormHelperText>
+                                                )
+                                                :
+                                                null
+                                            )
+                                        }
+                                    </Grid>
+                                    <Grid item>
+                                        <Button sx={{ marginLeft: 60, marginBottom: 1 }} variant="contained" disabled={check()} onClick={handleCreate}>Create</Button>
+                                        <Button sx={{ marginLeft: 1, marginBottom: 1 }} variant="contained" color="error"
+                                            onClick={() => { navigate("/admin/roles") }} >Back</Button>
+                                    </Grid>
                                 </Grid>
-                                <Grid item>
-                                    <Button sx={{ marginLeft: 60, marginBottom: 1 }} variant="contained" disabled={check()} onClick={handleCreate}>Create</Button>
-                                    <Button sx={{ marginLeft: 1, marginBottom: 1 }} variant="contained" color="error"
-                                        onClick={() => { navigate("/admin/roles") }} >Back</Button>
-                                </Grid>
-                            </Grid>
-                        </Paper>
+                            </Paper>
+                        }
                     </Container>
                 </div>
             </div>

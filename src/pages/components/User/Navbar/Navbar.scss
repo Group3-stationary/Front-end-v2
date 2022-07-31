@@ -28,13 +28,24 @@
 
     .user{
         display: flex;
-        text-align: center;
-
-        .user-name{
-            padding-top: 6px;
-            padding-left: 4px;
-        }
+        align-items: center;
     }
     
+}
+.notifi{
+    display: flex;
+    align-items: center;
+}
+
+.notifiItem{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 5px;
+    border-bottom: 2px solid rgb(49, 48, 48);
+}
+
+.notiIcon{
+    cursor: pointer;
 }
 

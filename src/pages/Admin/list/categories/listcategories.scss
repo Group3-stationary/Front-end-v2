@@ -1,8 +1,8 @@
-.home{
+.Catehome{
     display: flex;
-    .homeContainer{
+    .CatehomeContainer{
         flex: 85%;
-        .btn-create{
+        .btn-create-cate{
             padding-top: 10px;
             padding-left: 20px;
         }
@@ -10,11 +10,11 @@
 }
 
 @media screen and (max-width: 1000px) {
-    .home{
+    .Catehome{
         display: flex;
-        .homeContainer{
+        .CatehomeContainer{
             flex: 70%;
-            .btn-create{
+            .btn-create-cate{
                 padding-top: 10px;
                 padding-left: 20px;
             }
@@ -22,11 +22,11 @@
     }  
 }
 @media screen and (max-width: 750px) {
-    .home{
+    .Catehome{
         display: flex;
-        .homeContainer{
+        .CatehomeContainer{
             flex: 40%;
-            .btn-create{
+            .btn-create-cate{
                 padding-top: 10px;
                 padding-left: 20px;
             }
@@ -34,11 +34,11 @@
     }    
 }
 @media screen and (max-width: 500px) {
-    .home{
+    .Catehome{
         display: flex;
-        .homeContainer{
+        .CatehomeContainer{
             flex: 40%;
-            .btn-create{
+            .btn-create-cate{
                 padding-top: 10px;
                 padding-left: 20px;
             }

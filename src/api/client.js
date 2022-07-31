@@ -12,9 +12,9 @@ const accessTokenHoc = (previousAPI) => {
       token,
       refreshToken,
     });
-
     if (res) {
       if (res.data.token && res.data.refreshToken) {
+        localStorage.setItem("name", res.data.employeeName);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("refreshToken", res.data.refreshToken);
         previousAPI.headers.Authorization = `Bearer ${token}`;

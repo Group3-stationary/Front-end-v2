@@ -2,22 +2,29 @@ import "./dataproduct.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import http from "../../../../../api/client";
 import api from "../../../../../api/api";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ProductGetAll } from "../../../../../redux/product/product.action";
 import { CategoriesGetAll } from "../../../../../redux/category/category.action";
+import { GetAllOrder } from "../../../../../redux/order/order.action";
+import { GetAllOrderItem} from "../../../../../redux/orderItem/orderItem.action";
 import { Button, Container } from "react-bootstrap";
 import EditProduct from "../../../../Admin/edit/products/editProduct";
 import { RoleGetAll } from "../../../../../redux/role/role.action";
-import { CircularProgress } from "@mui/material";
+import { Alert, AlertTitle, CircularProgress, Dialog, DialogTitle, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import DeleteSuccesDialog from "../../dialog/deleteSuccess";
+
 
 
 const DataProduct = () => {
+  const [success, setSuccess] = useState(false);
+  const [id, setId] = useState("");
+  const [isDelete, setIsDelete] = useState(false);
 
   const dispatch = useDispatch();
   let navigate = useNavigate();
-  
+
   //#region Loading compomnent
   const sta = useSelector((state) => state.products.status)
 
@@ -43,8 +50,33 @@ const DataProduct = () => {
     }
   }
   //#endregion
-  
-  //Call API GetAllCategory
+
+  //#region Delete Dialog Component 
+  const DeleteDialog = (props) => {
+    return (
+      <div>
+        <Dialog open={isDelete} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            <Alert severity="warning" variant="filled" >
+              <AlertTitle>Delete!</AlertTitle>
+              Are you sure <strong>to delete?</strong>
+            </Alert>
+          </DialogTitle>
+          <Grid container item md={12} direction="row" justifyContent="center" alignItems="center" sx={{ margin: "10px 0px" }}>
+            <Button variant="contained" sx={{ marginRight: "20px", width: "250px" }} color="error" onClick={() => {
+              handleDelete(props.Id)
+              setIsDelete(false)
+            }}>Delete</Button>
+            <Button variant="outlined" sx={{ width: "250px" }} onClick={() => { setIsDelete(false) }} color="error">Cancle</Button>
+          </Grid>
+        </Dialog>
+      </div>
+    )
+  }
+  //#endregion
+
+  //#region Call API
+  // Call API GetAllCategory
   const getAllCategory = async () => {
     try {
       const res = await http.get(api.GetAllCategory);
@@ -53,32 +85,34 @@ const DataProduct = () => {
       navigate("/")
     }
   }
-
   //Call API GetAllProduct
   const getAllProduct = async () => {
     const res = await http.get(api.GetAllProduct);
     dispatch(ProductGetAll(res.data))
   }
-
-  //#region  api Roles
+  // api Roles
   const getAllRole = async () => {
-    
     const resRoles = await http.get(api.GetAllRoles);
     dispatch(RoleGetAll(resRoles.data));
   }
-
-  //#endregion
+  // api Order
+  const getAllOrder = async () => {
+    const resOrders = await http.get(api.GetAllOrder);
+    dispatch(GetAllOrder(resOrders.data));
+  }
+  // api OrderItem
+  const getAllOrderItem = async () => {
+    const resOrders = await http.get(api.GetAllOrderItem);
+    dispatch(GetAllOrderItem(resOrders.data));
+  }
 
   useEffect(() => {
     getAllCategory();
     getAllProduct();
     getAllRole();
+    getAllOrder();
+    getAllOrderItem();
   }, [])
-
-  const handleDelete = async (id) => {
-   await http.delete(api.DeleteProduct+id);
-    getAllProduct()
-  }
 
   //Selector product
   const items = useSelector((state) => state.products.products);
@@ -86,6 +120,29 @@ const DataProduct = () => {
   const cate = useSelector((state) => state.categories.categories);
   //Selector roles
   const roles = useSelector((state) => state.roles.roles);
+   //Selector orders
+   const orders = useSelector((state) => state.orders.orders);
+   //Selector orders
+   const orderItem = useSelector((state) => state.orderItem.orderItem);
+  //#endregion
+ 
+   //#region check use product
+   const chekUseProduct = (id) => {
+    let orItem = orderItem.find(e=>e.productId == id);
+    if(orItem !== undefined){
+      return true;
+    }
+    return false;
+  }
+  //#endregion
+
+  const handleDelete = async (id) => {
+    await http.delete(api.DeleteProduct + id);
+    getAllProduct();
+    setSuccess(true);
+  }
+
+  
   const categoryColumns = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "name", headerName: "Product Name", width: 300, },
@@ -121,14 +178,23 @@ const DataProduct = () => {
         return (
           <div className="cellAction">
             <EditProduct className="editButton" item={params.row} />
-            <Button className="deleteButton" variant="outlined" onClick={() => { handleDelete(params.row.id) }}>Delete</Button>
+            {chekUseProduct(params.row.id) ?
+              null
+              :<Button className="deleteButton" variant="outlined" onClick={() => {
+                {
+                  setId(params.row.id)
+                  setIsDelete(true)
+                }
+              }}>Delete</Button>
+            }
+            
           </div>
         )
       }
     }
   ]
 
-  
+
   const dataRow = items.map((item) => {
     let rol = roles.find(e => e.roleId === item.roleId);
     if (rol === undefined) {
@@ -164,7 +230,14 @@ const DataProduct = () => {
   const categoryRows = [...dataRow]
   return (
     <div className="datatableproduct">
-       <Render status={sta}/>
+      {success === true ?
+          <DeleteSuccesDialog success={true}/>
+          :
+          <>
+          <DeleteDialog Id={id} />
+          <Render status={sta} />
+          </>
+      }
     </div>
   )
 }

@@ -8,6 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { RoleGetAll } from "../../../../redux/role/role.action";
 import { useEffect, useState } from 'react';
+import { ProductGetAll } from "../../../../redux/product/product.action";
 import { Box, Button, Container, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputAdornment, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField } from "@mui/material";
 import { useNavigate } from "react-router";
 import { green } from "@mui/material/colors";
@@ -15,6 +16,7 @@ import validate from "validate.js";
 import { useDispatch, useSelector } from "react-redux";
 
 const CreateProduct = () => {
+    const [checkName,setCheckName]= useState(false);
     const [cate, setCate] = useState(false);
     const [img, setImg] = useState(false);
     const [role, setRole] = useState(false);
@@ -33,7 +35,7 @@ const CreateProduct = () => {
         createdAt: date,
         images: "",
     })
-
+ 
     //#region  Validation
     const [validation, setValidation] = useState({
         touched: {},
@@ -81,6 +83,12 @@ const CreateProduct = () => {
 
     }, [product]);
     useEffect(() => {
+        let proempname = products.find(e => e.productName === product.productName);
+        if(proempname === undefined){
+            setCheckName(false);
+        }else{
+            setCheckName(true);
+        }
         if (product.categoryId !== 0) {
             setCate(false);
         } else {
@@ -103,7 +111,9 @@ const CreateProduct = () => {
     const check = () => {
         if (validation.isvalid === false) {
             return true;
-        } else if (product.categoryId === 0) {
+        } else if (checkName === true){
+            return true;
+        }else if (product.categoryId === 0) {
             return true;
         } else if (product.roleId === 0) {
             return true;
@@ -148,14 +158,20 @@ const CreateProduct = () => {
     const categories = useSelector((state) => state.categories.categories);
     //#endregion
 
-    //#region  api Roles
+    //#region  api 
+    const getAllProduct = async () => {
+        const res = await http.get(api.GetAllProduct);
+        dispatch(ProductGetAll(res.data))
+    }
     const getAllRole = async () => {
         const resRoles = await http.get(api.GetAllRoles);
         dispatch(RoleGetAll(resRoles.data));
     }
     useEffect(() => {
+        getAllProduct();
         getAllRole();
     }, [])
+    const products = useSelector((state) => state.products.products);
     const roles = useSelector((state) => state.roles.roles);
     //#endregion
 
@@ -196,13 +212,12 @@ const CreateProduct = () => {
 
 
     return (
-        <div className="home">
+        <div className="ProCrhome">
             <AdminSidebar id={2} />
-            <div className="homeContainer">
-                <AdminNavbars title="Create Category" />
-                <div className="create sm md">
-                    <div className="right">
-                        <Container>
+            <div className="ProCrhomeContainer">
+                <AdminNavbars title="Create Product" />
+                <div className="create-proCr sm md">
+                <Container>
                             <Paper>
                                 <Grid container spacing={2}>
                                     {/* productName  */}
@@ -234,7 +249,16 @@ const CreateProduct = () => {
                                                 </FormHelperText>
                                             )
                                             :
-                                            null
+                                            (checkName === true? 
+                                                (
+                                                    <FormHelperText id="outlined-weight-helper-text" className="text">
+                                                    <ErrorIcon fontSize="small" />
+                                                    This name already exists
+                                                    </FormHelperText>
+                                                )
+                                                :
+                                                null
+                                            )
                                         }
                                     </Grid>
 
@@ -410,16 +434,15 @@ const CreateProduct = () => {
                                         </FormControl>
                                     </Grid>
 
-                                    <Grid item xs={12} md={12} >
-                                        <Button className="btn-create" variant="contained" onClick={handleSubmit} disabled={check()}
+                                    <Grid item xs={12} md={12} sx={{ margin: 0.5 }} >
+                                        <Button className="btn-create-pro" variant="contained" onClick={handleSubmit} disabled={check()}
                                         >Create</Button>
-                                        <Button className="btn-back" variant="contained" color="error"
-                                            onClick={() => { navigate("/admin/product") }} >Back</Button>
+                                        <Button className="btn-back-pro" variant="contained" color="error"
+                                            onClick={() => { navigate("/admin/products") }} >Back</Button>
                                     </Grid>
                                 </Grid>
                             </Paper>
                         </Container>
-                    </div>
                 </div>
             </div>
         </div>
