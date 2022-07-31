@@ -6,12 +6,12 @@ import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 const ListCategories = () => {
   return (
-    <div className="home">
+    <div className="Catehome">
       <AdminSidebar id={1} />
-      <div className="homeContainer">
+      <div className="CatehomeContainer">
         <AdminNavbars title="List Categories" />
         <Link to="/admin/categories/create" style={{ textDecoration: "none" }}>
-          <div className="btn-create sm md">
+          <div className="btn-create-cate sm md">
             <Button variant="success">Create</Button>
           </div>
         </Link>

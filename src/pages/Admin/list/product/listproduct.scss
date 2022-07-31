@@ -1,8 +1,8 @@
-.home{
+.Prohome{
     display: flex;
-    .homeContainer{
+    .ProhomeContainer{
         flex: 85%;
-        .btn-create{
+        .btn-create-pro{
             padding-top: 10px;
             padding-left: 20px;
         }
@@ -10,11 +10,11 @@
 }
 
 @media screen and (max-width: 1000px) {
-    .home{
+    .Prohome{
         display: flex;
-        .homeContainer{
+        .ProhomeContainer{
             flex: 70%;
-            .btn-create{
+            .btn-create-pro{
                 padding-top: 10px;
                 padding-left: 20px;
             }
@@ -22,11 +22,11 @@
     }  
 }
 @media screen and (max-width: 750px) {
-    .home{
+    .Prohome{
         display: flex;
-        .homeContainer{
+        .ProhomeContainer{
             flex: 40%;
-            .btn-create{
+            .btn-create-pro{
                 padding-top: 10px;
                 padding-left: 20px;
             }
@@ -34,11 +34,11 @@
     }    
 }
 @media screen and (max-width: 500px) {
-    .home{
+    .Prohome{
         display: flex;
-        .homeContainer{
+        .ProhomeContainer{
             flex: 40%;
-            .btn-create{
+            .btn-create-pro{
                 padding-top: 10px;
                 padding-left: 20px;
             }

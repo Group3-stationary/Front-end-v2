@@ -8,12 +8,12 @@ import { Link } from "react-router-dom";
 
 const ListProduct = () => {
   return (
-    <div className="home">
+    <div className="Prohome">
            <AdminSidebar id = {2}/>
-           <div className="homeContainer">
+           <div className="ProhomeContainer">
                 <AdminNavbars title="List Product"/>
                 <Link to="/admin/products/create" style={{ textDecoration: "none" }}>
-                  <div className="btn-create sm md">
+                  <div className="btn-create-pro sm md">
                     <Button variant="success">Create</Button>
                   </div>
                 </Link>

@@ -1,6 +1,6 @@
-.home{
+.role{
     display: flex;
-    .homeContainer{
+    .roleContainer{
         flex: 85%;
         .create{
             padding-top: 10%;
@@ -9,9 +9,9 @@
 }
 
 @media screen and (max-width: 1000px) {
-    .home{
+    .role{
         display: flex;
-        .homeContainer{
+        .roleContainer{
             flex: 70%;
             .create{
                 padding-top: 10px;
@@ -20,9 +20,9 @@
     }  
 }
 @media screen and (max-width: 750px) {
-    .home{
+    .role{
         display: flex;
-        .homeContainer{
+        .roleContainer{
             flex: 40%;
             .create{
                 padding-top: 10px;
@@ -31,9 +31,9 @@
     }    
 }
 @media screen and (max-width: 500px) {
-    .home{
+    .role{
         display: flex;
-        .homeContainer{
+        .roleContainer{
             flex: 40%;
             .create{
                 padding-top: 10px;

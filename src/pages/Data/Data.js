@@ -10,31 +10,37 @@ export const SidebarData = [
       icon: DashboardIcon,
       heading: "Dashboard",
       link: "/admin",
+      role: [{id:1},{id:2},{id:3}]
     },
     {
       icon: CategoryIcon,
       heading: "Categories",
       link: "/admin/categories",
+      role: [{id:1}],
     },
     {
       icon: StoreIcon,
       heading: "Products",
       link: "/admin/products",
+      role: [{id:1},{id:3}],
     },
     {
       icon: PersonIcon,
       heading: "Employees",
       link: "/admin/employees",
+      role: [{id:1},{id:2},{id:3}],
     },
     {
       icon: ListAltIcon,
       heading: "Orders",
       link: "/admin/orders",
+      role: [{id:1},{id:2},{id:3}],
     },
     {
       icon: HowToRegIcon,
       heading: "Roles",
       link: "/admin/roles",
+      role: [{id:1}],
     },
 ];
   

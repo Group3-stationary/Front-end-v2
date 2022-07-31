@@ -1,42 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./cart.scss";
 import { useSelector, useDispatch } from "react-redux";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CloseIcon from '@mui/icons-material/Close';
-import { NavLink } from "react-router-dom";
-import { addCart, delCart,delAllCart } from "../../../redux/order/order.action";
+import { useNavigate } from "react-router-dom";
+import { addCart, delCart, delAllCart, Clear } from "../../../redux/cart/cart.action";
 import http from "../../../api/client";
 import api from "../../../api/api";
-import { async } from "validate.js";
+import { GetProfile } from "../../../redux/profile/profile.action";
+
 
 const Cart = () => {
   const state = useSelector((state) => state.cart);
-  
+  let navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state)=>state.user.currentUser);
+  const user = useSelector((state) => state.user.currentUser);
+  const date = new Date()
   const cart = {
       EmployeeId: user.employeeID,
-      Product: state.map(item => ({
+      Status: "Waiting for approval",
+      CreatedAt: date.toISOString(),
+      Products: state.map(item => ({
         ProductId: item.productId,
         Quantity: item.qty
       })
       )
   }
 
-//#region Call API Role
 
-
-const roles = useSelector((state) => state.roles.roles);
-//#endregion
-
-
-  console.log(cart)
-  const categories = useSelector(state=>state.categories.categories);
-  const cate = (id) =>{
-    let ca = categories.find(e=>e.categotyId === id);
-    console.log(id);
-    return ca.categotyName;
+  //#region Call API Role
+  const roles = useSelector((state) => state.roles.roles);
+  //#endregion
+  const [total, setTotal] = useState(0);
+  const categories = useSelector(state => state.categories.categories);
+  const getProfile = async () => {
+    const resEmp = await http.get(api.GetProfileByIdEmp + user.employeeID);
+    dispatch(GetProfile(resEmp.data));
   }
   const handleAdd = (item) => {
     dispatch(addCart(item));
@@ -48,76 +48,27 @@ const roles = useSelector((state) => state.roles.roles);
     dispatch(delAllCart(item));
   };
 
-  
-  const handleOrder = async () =>{
-    await http.create(api.CreateOrderDetails);
+  useEffect(() => {
+    let sum = 0;
+    state.map((product) => {
+      sum = sum + product.qty * product.price
+    })
+    setTotal(sum);
+    getProfile();
+  });
+  const profiles = useSelector((state) => state.profile.profile);
+
+  const handleOrder = async () => {
+    await http.post(api.CreateOrderDetails,cart);
+    dispatch(Clear());
+  }
+
+  const handleBack = () =>{
+    navigate("/");
   }
 
 
- 
   return (
-    //     <>
-    //       <div className="px-4 my-5 bg-light rounded-3 py-5">
-    //         <div className="container py-4">
-    //           <div className="row justify-content-center">
-    //             <div className="col-md-4">
-    //               <img
-    //                 src={"http://localhost:8832/"+product.featureImgPath}
-    //                 alt={product.productName}
-    //                 height="200px"
-    //                 width="180px"
-    //               />
-    //             </div>
-    //             <div className="col-md-4">
-    //               <h3>{product.productName}</h3>
-    //               <p className="lead fw-bold">
-    //                 {product.qty} X ${product.price} = $
-    //                 {product.qty * product.price}
-    //               </p>
-    //               <button
-    //                 className="btn btn-outline-dark me-4"
-    //                 onClick={() => handleDel(product)}
-    //               >
-    //                 <i className="fa fa-minus"></i>
-    //               </button>
-    //               <button
-    //                 className="btn btn-outline-dark"
-    //                 onClick={() => handleAdd(product)}
-    //               >
-    //                 <i className="fa fa-plus"></i>
-    //               </button>
-    //             </div>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </>
-    //   );
-    // };
-    // const buttons = () => {
-    //   return (
-    //     <>
-    //       <div className="container">
-    //         <div className="row">
-    //           <NavLink
-    //             to="/checkout"
-    //             className="btn btn-outline-dark mb-5 w-25 mx-auto"
-    //           >
-    //             Proceed to Checkout
-    //           </NavLink>
-    //         </div>
-    //       </div>
-    //     </>
-    //   );
-    // };
-
-    // return (
-    //   <div>
-    //     {state.length === 0 && emptyCart()}
-    //     {state.length !== 0 && state.map(cartItems)}
-    //     {state.length !== 0 && buttons()}
-    //   </div>
-
-
     <section className="h-100 h-custom" style={{ backgroundColor: '#d2c9ff' }}>
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
@@ -129,7 +80,7 @@ const roles = useSelector((state) => state.roles.roles);
                     <div className="p-5">
                       <div className="d-flex justify-content-between align-items-center mb-5">
                         <h1 className="fw-bold mb-0 text-black">Shopping Cart</h1>
-                        <h6 className="mb-0 text-muted">3 items</h6>
+                        <h6 className="mb-0 text-muted">{state.length} items</h6>
                       </div>
                       {state.length === 0 ?
                         (
@@ -146,36 +97,35 @@ const roles = useSelector((state) => state.roles.roles);
                           <div key={product.productId}>
                             <div className="row mb-4 d-flex justify-content-between align-items-center">
                               <div className="col-md-2 col-lg-2 col-xl-2">
-                                <img src={"http://localhost:8832/"+product.featureImgPath} className="img-fluid rounded-3" alt="Cotton T-shirt" />
+                                <img src={"http://localhost:8832/" + product.featureImgPath} className="img-fluid rounded-3" alt="Cotton T-shirt" />
                               </div>
                               <div className="col-md-3 col-lg-3 col-xl-3">
-                                <h6 className="text-muted"></h6>
                                 <h6 className="text-black mb-0">{product.productName}</h6>
                               </div>
                               <div className="col-md-3 col-lg-3 col-xl-2 d-flex">
                                 <button className="btn btn-link px-2" onClick={() => handleDel(product)}>
-                                    <RemoveIcon/>
+                                  <RemoveIcon />
                                 </button>
                                 <div className="qty">
                                   <div>
                                     {product.qty}
                                   </div>
                                 </div>
-                                <button className="btn btn-link px-2" onClick={() => handleAdd(product)}>                                
-                                    <AddIcon/>
+                                <button className="btn btn-link px-2" onClick={() => handleAdd(product)}>
+                                  <AddIcon />
                                 </button>
                               </div>
                               <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1 close">
                                 <div>
-                                    <h6 className="mb-0">${product.qty * product.price}</h6>
+                                  <h6 className="mb-0">${product.qty * product.price}</h6>
                                 </div>
                                 <div>
-                                  <button className="btn btn-link px-2" onClick={()=> handleDelAll(product)}>
-                                      <CloseIcon color="error"/>
+                                  <button className="btn btn-link px-2" onClick={() => handleDelAll(product)}>
+                                    <CloseIcon color="error" />
                                   </button>
                                 </div>
                               </div>
-                             
+
                               <div className="col-md-1 col-lg-1 col-xl-1 text-end">
                                 <a href="#!" className="text-muted"><i className="fas fa-times" /></a>
                               </div>
@@ -185,10 +135,8 @@ const roles = useSelector((state) => state.roles.roles);
                         ))
                         )
                       }
-
-
                       <div className="pt-5">
-                        <h6 className="mb-0"><a href="#!" className="text-body"><i className="fas fa-long-arrow-alt-left me-2" />Back to shop</a></h6>
+                        <h6 className="mb-0"><a onClick={handleBack} className="text-body"><i className="fas fa-long-arrow-alt-left me-2" />Back to shop</a></h6>
                       </div>
                     </div>
                   </div>
@@ -197,15 +145,20 @@ const roles = useSelector((state) => state.roles.roles);
                       <h3 className="fw-bold mb-5 mt-2 pt-1">Summary</h3>
                       <hr className="my-4" />
                       <div className="d-flex justify-content-between mb-4">
-                        <h5 className="text-uppercase">items 3</h5>
-                        <h5>€ 132.00</h5>
+                        <h5 className="text-uppercase">items {state.length}</h5>
+                        <h5>{total} $</h5>
                       </div>
                       <hr className="my-4" />
                       <div className="d-flex justify-content-between mb-5">
                         <h5 className="text-uppercase">Total price</h5>
-                        <h5>€ 137.00</h5>
+                        <h5>{total} $</h5>
                       </div>
-                      <button type="button" className="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark" onClick={handleOrder}>Register</button>
+                      {profiles.budget > total ?
+                        <button type="button" className="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark" onClick={handleOrder}>Order</button>
+                        :
+                        <h3 className="fw-bold mb-5 mt-2 pt-1" style={{color: "orangered"}}>Balance not available</h3>
+                      }
+                      
                     </div>
                   </div>
                 </div>

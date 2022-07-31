@@ -6,15 +6,10 @@ import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 const ListOrders = () => {
   return (
-    <div className="home">
+    <div className="Orderhome">
            <AdminSidebar id = {4}/>
-           <div className="homeContainer">
+           <div className="OrderhomeContainer">
                 <AdminNavbars title="List Order"/>
-                <Link to="/admin/orders/create" style={{ textDecoration: "none" }}>
-                <div className="btn-create sm md">
-                  <Button variant="success">Create</Button>
-                </div>
-                </Link>
                 <DataOrders/>    
            </div>
         </div>

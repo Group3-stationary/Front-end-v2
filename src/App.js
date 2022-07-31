@@ -13,15 +13,8 @@ import ListCategories from "./pages/Admin/list/categories/ListCategories";
 import ListOrders from "./pages/Admin/list/order/ListOrders";
 import ListEmployees from "./pages/Admin/list/employees/ListEmployees";
 import CreateCategory from "./pages/Admin/create/categories/CreateCategories";
-import {
-  productInputs,
-  assistantInputs,
-  orderDetailForm,
-} from "./pages/Data/dataformCreate";
 import CreateProduct from "./pages/Admin/create/products/CreateProducts";
 import CreateEmployee from "./pages/Admin/create/employees/CreateEmployee";
-import DetailsProduct from "./pages/Admin/details/products/DeatailProduct";
-import { productRows } from "./pages/Data/dataProduct";
 import DetailsOrder from "./pages/Admin/details/orders/DeatailOrder";
 import DetailsEmployee from "./pages/Admin/details/employees/DeatailEmployee";
 import Login from "./pages/User/Login/Login";
@@ -30,14 +23,23 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import ListRoles from "./pages/Admin/list/role/ListRoles";
 import CreateRole from "./pages/Admin/create/role/CreateRoles";
+import Profile from "./pages/User/Profile/profile";
 const App = ({user}) => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
+        {localStorage.getItem("name")?
+         ( <Route
           path="/"
-          element={user.employeeName === localStorage.getItem("name") ? <UserHome /> : <Login />}
-        />
+          element={user.employeeName === localStorage.getItem("name")? <UserHome /> : <Login />}
+        />)
+          
+          :
+          (<Route
+            path="/"
+            element={<Login />}
+          />)
+        }
         {/* admin */}
         {user.employeeName === localStorage.getItem("name") ? (
           <Route path="/">
@@ -64,43 +66,15 @@ const App = ({user}) => {
               </Route>
               <Route path="orders/">
                 <Route index element={<ListOrders />} />
-                <Route
-                  path=":detailId"
-                  element={
-                    <DetailsOrder
-                      inputs={orderDetailForm}
-                      title=" Details of "
-                    />
-                  }
-                ></Route>
-                {/* <Route path="edit">
-                      <Route path=":orderId" element={<EditOrder inputs = {orderInputs} title="Update status "/>}></Route>
-                    </Route> */}
               </Route>
               <Route path="employees/">
                 <Route index element={<ListEmployees />} />
                 <Route
                   path="create"
                   element={
-                    <CreateEmployee
-                      inputs={assistantInputs}
-                      title="Add new assistant"
-                    />
+                    <CreateEmployee/>
                   }
                 />
-                <Route
-                  path=":employeeId"
-                  element={
-                    <DetailsEmployee
-                      inputs={assistantInputs}
-                      title="Detail of "
-                    />
-                  }
-                />
-                {/* <Route path="edit">
-                    <Route path=":userId" element={<EditAdmin inputs = {assistantInputs} title="Edit Profile"/>}/>
-                      </Route>
-                    */}
               </Route>
               <Route path="roles/">
                 <Route index element={<ListRoles/>} />
@@ -120,6 +94,7 @@ const App = ({user}) => {
               <Route index element={<UserHome />} />
             </Route>
             <Route path="/cart" element={<Cart/>} />
+            <Route path="/profile" element={<Profile/>} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/" />} />

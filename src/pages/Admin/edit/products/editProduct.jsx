@@ -28,6 +28,7 @@ import validate from "validate.js";
 import { green } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import { ProductGetAll } from "../../../../redux/product/product.action";
+import UpdateSuccessDialog from "../../../components/Admin/dialog/updateSuccess";
 
 function EditProduct(props) {
     let navigate = useNavigate();
@@ -165,17 +166,7 @@ function EditProduct(props) {
     };
 
     let formData = new FormData();
-    const obj = 
-    product.images ? {      
-        productId: product.ProductId,
-        productName: product.ProductName,
-        quantity: product.Quantity,
-        price: product.Price,
-        categoryId: product.CategoryId,
-        productEnable: product.ProductEnable,
-        roleId: product.RoleId,
-    }:
-    {      
+    const obj = {
         productId: product.ProductId,
         productName: product.ProductName,
         quantity: product.Quantity,
@@ -186,14 +177,13 @@ function EditProduct(props) {
         roleId: product.RoleId,
         createdAt: product.CreateAt,
         updatedAt: product.UpdatedAt,
-
     }
 
     formData.append("productJson", JSON.stringify(obj));
     formData.append("files", product.images);
     //#endregion
-    console.log(formData.get("productJson"))
-    //Hame handle
+
+    //#region Hame handle
     const handleEdit = async () => {
         try {
             await http.put(api.EditProduct, formData, config);
@@ -207,12 +197,7 @@ function EditProduct(props) {
         const res = await http.get(api.GetAllProduct);
         dispatch(ProductGetAll(res.data))
     }
-    useEffect(() => {
-        if (success === true) {
-            getAllProduct();
-            setOpenDialog(false);
-        }
-    }, [success])
+    
 
     const [isOpen, setOpenDialog] = useState(false);
 
@@ -235,9 +220,13 @@ function EditProduct(props) {
         }))
         setOpenDialog(false)
     }
+    //#endregion
     return (
         <div>
             <Button className="editButton" variant="outlined" onClick={handleOpen}>Edit</Button>
+            {success === true ?
+                <UpdateSuccessDialog success={true} />
+                :
             <Dialog open={isOpen} maxWidth="lg" fullWidth>
                 <DialogTitle textAlign="center">Edit Product</DialogTitle>
                 <Grid
@@ -436,6 +425,7 @@ function EditProduct(props) {
                     </Grid>
                 </Grid>
             </Dialog>
+            }
         </div>
     )
 }

@@ -18,7 +18,7 @@ const Login = ({ user, login, status }) => {
     employeeID: "",
     password: "",
   });
-
+  
   // Tạo hàm xử lý input của người dùng. khi người dùng input thì cập nhật lại state cục bộ đã khai ở trên.
   const handleChange = (event) => {
     setUserLogin((preState) => ({
@@ -32,7 +32,11 @@ const Login = ({ user, login, status }) => {
   // Tạo hàm xử lý khi user nhấn nút login.
   const handleLogin = () => {
     // login chỗ này chính là prop ở trên. khi call login này thì chính là
-    login(userLogin);
+    try{
+      login(userLogin);
+    } catch (err) {
+      navigate("/")
+    }
   };
 
 
