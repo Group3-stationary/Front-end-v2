@@ -5,10 +5,12 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
+import { useNavigate } from "react-router-dom";
 
-const Widget = ({ type, amount }) => {
+const Widget = ({ type, amount, link }) => {
 
-    
+    const navigate = useNavigate()
+
     let data;
     //temporeary
 
@@ -47,9 +49,8 @@ const Widget = ({ type, amount }) => {
             break;
         case "cost":
             data = {
-                title: "TOTAL ORDER COST",
+                title: "TOTAL ACCEPTED ORDERS COST",
                 isMoney: true,
-                link: "View net earnings",
                 icon: (
                     <MonetizationOnOutlinedIcon
                         className="icon"
@@ -58,11 +59,10 @@ const Widget = ({ type, amount }) => {
                 ),
             };
             break;
-        case "balance":
+        case "orderRate":
             data = {
-                title: "BALANCE",
-                isMoney: true,
-                link: "See details",
+                title: "ACCEPTED ORDERS RATE",
+                isMoney: false,
                 icon: (
                     <AccountBalanceWalletOutlinedIcon
                         className="icon"
@@ -83,7 +83,7 @@ const Widget = ({ type, amount }) => {
             <div className="left">
                 <span className="title">{data.title}</span>
                 <span className="counter">{data.isMoney && "$"}{amount}</span>
-                <span className="link">{data.link}</span>
+                <span className="link" onClick={()=>{navigate(link)}}>{data.link}</span>
             </div>
             <div className="right">
                 {data.icon}

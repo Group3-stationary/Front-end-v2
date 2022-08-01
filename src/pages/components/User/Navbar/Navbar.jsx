@@ -85,7 +85,6 @@ const UserNavbars = () => {
                </div>
                <span className="quantity" ms={1}>{state.length}</span>
               </Button>
-              <Button onClick={()=>{navigate("/admin")}}/>
               <div className='notifi'>
                   <Badge color="error" badgeContent={notifications.length} onClick={handleClick} className="notiIcon">
                     <NotificationsNoneOutlinedIcon className="icon" />

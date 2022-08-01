@@ -2,7 +2,7 @@ import "./listcategories.scss"
 import Datacategories from "../../../components/Admin/dataTable/categories/dataCategories";
 import AdminNavbars from "../../../components/Admin/navbar/AdminNavbar";
 import AdminSidebar from "../../../components/Admin/sidebar/AdminSidebar";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 const ListCategories = () => {
   return (
@@ -10,11 +10,13 @@ const ListCategories = () => {
       <AdminSidebar id={1} />
       <div className="CatehomeContainer">
         <AdminNavbars title="List Categories" />
-        <Link to="/admin/categories/create" style={{ textDecoration: "none" }}>
+        
           <div className="btn-create-cate sm md">
-            <Button variant="success">Create</Button>
+            <Link to="/admin/categories/create" style={{ textDecoration: "none" }}>
+              <Button variant="outlined">Create</Button>
+            </Link>
           </div>
-        </Link>
+        
         <Datacategories />
       </div>
     </div>
