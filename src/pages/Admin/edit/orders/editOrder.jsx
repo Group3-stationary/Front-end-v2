@@ -45,7 +45,7 @@ function EditOrder(props) {
         employeeId: props.orders.empId,
         status: props.orders.status,
         createdAt: props.orders.create,
-        updatedAt: date,
+        updatedAt: date.toISOString(),
     });
 
     const handleChange = (event) => {
@@ -101,9 +101,6 @@ function EditOrder(props) {
                         </Grid>
                         <Grid item md={12}>
                             <TextField label="EMPLOYEE NAME" variant="outlined" className="InputField" fullWidth defaultValue={profiles.employeeName} InputProps={{ readOnly: true }} />
-                        </Grid>
-                        <Grid item md={12}>
-                            <TextField label="ORDER ID" variant="outlined" className="InputField" fullWidth defaultValue={order.orderId} InputProps={{ readOnly: true }} />
                         </Grid>
 
                         <Grid container item md={12} direction="row" justifyContent="center" alignItems="center">

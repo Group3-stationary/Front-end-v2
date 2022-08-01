@@ -29,16 +29,6 @@ const AdminNavbars = (prop) => {
                                 <LanguageOutlinedIcon className="icon" />
                                 English
                             </div></Nav.Link>
-                            <Nav.Link href="#action1">
-                                <div className="item">
-                                    <NotificationsNoneOutlinedIcon className="icon" />
-                                    <div className="counter">1</div>
-                                </div>
-                            </Nav.Link>
-                            <Nav.Link href="#action1"> <div className="item">
-                                <ChatBubbleOutlineOutlinedIcon className="icon" />
-                                <div className="counter">2</div>
-                            </div></Nav.Link>
                         </Nav>
                     </Offcanvas.Body>
                 </Navbar.Offcanvas>

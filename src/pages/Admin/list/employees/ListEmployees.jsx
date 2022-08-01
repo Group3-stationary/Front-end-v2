@@ -2,7 +2,7 @@ import "./listemployees.scss"
 import AdminNavbars from "../../../components/Admin/navbar/AdminNavbar";
 import AdminSidebar from "../../../components/Admin/sidebar/AdminSidebar";
 import DataEmployees from "../../../components/Admin/dataTable/employees/dataEmployees";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 const ListEmployees = () => {
   return (
@@ -10,11 +10,13 @@ const ListEmployees = () => {
            <AdminSidebar id = {3}/>
            <div className="EmphomeContainer">
                 <AdminNavbars title="List Employees"/>
-                <Link to="/admin/employees/create" style={{ textDecoration: "none" }}>
-                  <div className="btn-create-emp sm md">             
-                    <Button variant="success">Create</Button>
+                
+                  <div className="btn-create-emp sm md"> 
+                    <Link to="/admin/employees/create" style={{ textDecoration: "none" }}>           
+                    <Button variant="outlined">Create</Button>
+                    </Link>
                   </div>
-                </Link>
+                
                 <DataEmployees/>    
            </div>
         </div>

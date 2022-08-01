@@ -55,7 +55,7 @@ function DetailsOrder(props) {
         sum = sum + product.quantity * product.price
       })
       setTotal(sum);
-    },);
+    });
   const handleOpen = () => {
     setOpenDialog(true)
   }
@@ -74,12 +74,12 @@ function DetailsOrder(props) {
             <div className="col-lg-10 col-xl-8">
               <div className="card" style={{ borderRadius: '10px' }}>
                 <div className="card-header px-4 py-5">
-                  <h5 className="text-muted mb-0">Employee: {profiles.employeeName}</h5>
+                  <h5 className="text-muted mb-0">Employee: {props.orders.employee}</h5>
                 </div>
                 <div className="card-body p-4">
                   <div className="d-flex justify-content-between align-items-center mb-4">
                     <p className="lead fw-normal mb-0" style={{ color: '#a8729a' }}>Order Id</p>
-                    <p className="small text-muted mb-0">{}</p>
+                    <p className="small text-muted mb-0">{props.orders.id}</p>
                   </div>
                   {orderItems.map(produc=>
                   <div className="card shadow-0 border mb-4" key={produc.id}>

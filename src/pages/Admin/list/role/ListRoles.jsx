@@ -5,7 +5,7 @@ import AdminSidebar from "../../../components/Admin/sidebar/AdminSidebar";
 import { RoleGetAll } from "../../../../redux/role/role.action";
 import http from "../../../../api/client";
 import api from "../../../../api/api";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Alert, AlertTitle, Dialog, DialogTitle, Grid, TextField, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -112,7 +112,7 @@ const ListRoles = () => {
         <SetUpBudget />
         <div className="btn-create-role sm md">
           <Link to="/admin/roles/create" style={{ textDecoration: "none" }}>
-            <Button variant="success">Create</Button>
+            <Button variant="outlined">Create</Button>
           </Link>
           <Button variant="outlined" sx={{ marginLeft: "20px" }} color="secondary" onClick={() => { setIsOpen(true) }}>Set Up Budget</Button>
         </div>

@@ -87,11 +87,16 @@ const DataOrders = () => {
     const resRoles = await http.get(api.GetAllRoles);
     dispatch(RoleGetAll(resRoles.data));
   }
+  // API profile
+  const getProfile = async () => {
+  const resEmp = await http.get(api.GetProfileByIdEmp + user.employeeID);
+    dispatch(GetProfile(resEmp.data));
+  }
 
   useEffect(() => {
-    getAllOrder();
-    getAllEmployee();
-    getAllRole();
+    getAllOrder()
+    getAllEmployee()
+    getAllRole()
   }, []);
 
   const user = useSelector((state) => state.user.currentUser);
@@ -101,6 +106,8 @@ const DataOrders = () => {
   const orders = useSelector((state) => state.orders.orders);
   //select employees
   const employees = useSelector((state) => state.employees.employees);
+  //select profile
+  
   //#endregion
 
 
@@ -127,11 +134,28 @@ const DataOrders = () => {
               :
               null
             }
+            {user.userRoles === 2 && params.row.status == "Waiting for approval" ?
+              <EditOrder orders={params.row} statusApp="Acceptance" statusRee="Disagree" />
+              :
+              null
+            }
             {user.userRoles === 5 && params.row.status == "Waiting for approval" ?
               <EditOrder orders={params.row} statusApp="Approved" statusRee="Rejected" />
               :
               null
             }
+            {user.userRoles === 1 && params.row.status === "Rejected" ? 
+              <Button className="deleteButton" variant="outlined" onClick={() => {
+                setIsDelete(true)
+                setId(params.row.id)
+              }
+              }>Delete</Button> : null}
+            {user.userRoles === 1 && params.row.status === "Disagree" ? 
+              <Button className="deleteButton" variant="outlined" onClick={() => {
+                setIsDelete(true)
+                setId(params.row.id)
+              }
+              }>Delete</Button> : null}
             <DetailsOrder orders={params.row} />
           </div>
 
@@ -146,21 +170,40 @@ const DataOrders = () => {
 
   const empList = employees.filter(emp => emp.superiors === user.employeeID)
 
-    orders.forEach(function(element){
-      if (element.employeeId === user.employeeID) {
-        Orlist.push(element);
+  let empList2 = [];
+
+  empList.forEach(sup => {
+    employees.forEach(emp => {
+      if(emp.superiors === sup.employeeId){
+        empList2.push(emp)
       }
     })
-    empList.forEach(function(element){
-      orders.forEach(function(or){
-        if (element.employeeId === or.employeeId) {
-          Orlist.push(or);
-        }
-      })
+  })
+
+  console.log(empList2)
+  
+  
+  empList.forEach(emp => {
+    orders.forEach(order => {
+      if(order.employeeId === emp.employeeId){
+        Orlist.push(order)
+      }
     })
+  })
+ 
+  empList2.forEach(emp => {
+    orders.forEach(order => {
+      if(order.employeeId === emp.employeeId && order.status === "Approved"){
+        Orlist.push(order)
+      }
+    })
+  })
 
+  if(user.userRoles === 1){
+    Orlist = [...orders]
+  }
 
-  const dataRow = Orlist.map((order) => {
+  const orderRows = Orlist.map((order) => {
     let name = employees.find(e => e.employeeId === order.employeeId)
     if (name === undefined) {
       name = {
@@ -175,8 +218,6 @@ const DataOrders = () => {
       empId: order.employeeId,
     }
   })
-
-  const orderRows=dataRow;
   return (
     <div className="datatableorder">
       {success === true ?

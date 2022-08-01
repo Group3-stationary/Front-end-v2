@@ -60,37 +60,50 @@ const AdminHome = () => {
 
     let cost = 0;
 
-    orderDetails.forEach(orderItem => {
-        products.forEach(product => {
-            if (orderItem.productId === product.productId) {
-                cost = cost + (orderItem.quantity * product.price)
+    //loc order
+    const orderList = orders.filter(item => item.status === "Acceptance")
+
+    orderList.forEach(order => {
+        orderDetails.forEach(orderItem => {
+            if(order.orderId === orderItem.orderId){
+                products.forEach(product => {
+                    if (orderItem.productId === product.productId) {
+                        cost = cost + (orderItem.quantity * product.price)
+                    }
+                })
             }
         })
     })
 
     const orderItems = [];
-    orderDetails.forEach(item => {
-        if (orderItems.length === 0) {
-            orderItems.push(item)
-        } else {
-            let check = orderItems.find(e => e.productId === item.productId)
-            if (check === undefined) {
-                orderItems.push(item)
-            } else {
-                check = { ...check, quantity: check.quantity + item.quantity }
-                const index = orderItems.findIndex(o => o.productId === check.productId)
-                orderItems[index] = { ...check }
+    orderList.forEach(order => {
+        orderDetails.forEach(item => {
+            if(order.orderId === item.orderId){
+                if (orderItems.length === 0) {
+                    orderItems.push(item)
+                } else {
+                    let check = orderItems.find(e => e.productId === item.productId)
+                    if (check === undefined) {
+                        orderItems.push(item)
+                    } else {
+                        check = { ...check, quantity: check.quantity + item.quantity }
+                        const index = orderItems.findIndex(o => o.productId === check.productId)
+                        orderItems[index] = { ...check }
+                    }
+                }
             }
-        }
+        })
     })
+    
     return (
         <div className="homeAdmin">
             <Sidebar id={0} />
             <div className="homeAdminContainer">
                 <Navbars title="Home" />
                 <div className="widgets">
-                    <Widget type="user" amount={employees.length} />
-                    <Widget type="order" amount={orders.length} />
+                    <Widget type="user" amount={employees.length} link="/admin/employees"/>
+                    <Widget type="order" amount={orders.length} link="/admin/orders"/>
+                    <Widget type="orderRate" amount={orderList.length+"/"+orders.length} link="/admin/orders"/>
                     <Widget type="cost" amount={cost} />
                 </div>
                 <div className="charts">
@@ -109,7 +122,7 @@ const AdminHome = () => {
                                 }
                                 const costs = productName.price * orderItem.quantity
                                 return (
-                                    <Grid item md={2} xs={3} key={orderItem.id}>
+                                    <Grid item md={3} xs={4} key={orderItem.id}>
                                         <Featured key={orderItem.id} title={productName.productName} rate={rate} cost={costs} />
                                     </Grid>
                                 )

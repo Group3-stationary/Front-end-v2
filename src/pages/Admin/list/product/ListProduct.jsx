@@ -3,7 +3,7 @@ import "./listproduct.scss"
 import DataProduct from "../../../components/Admin/dataTable/product/dataProduct";
 import AdminSidebar from "../../../components/Admin/sidebar/AdminSidebar";
 import AdminNavbars from "../../../components/Admin/navbar/AdminNavbar";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const ListProduct = () => {
@@ -12,11 +12,13 @@ const ListProduct = () => {
            <AdminSidebar id = {2}/>
            <div className="ProhomeContainer">
                 <AdminNavbars title="List Product"/>
-                <Link to="/admin/products/create" style={{ textDecoration: "none" }}>
+                
                   <div className="btn-create-pro sm md">
-                    <Button variant="success">Create</Button>
+                  <Link to="/admin/products/create" style={{ textDecoration: "none" }}>
+                  <Button variant="outlined">Create</Button>
+                  </Link>
                   </div>
-                </Link>
+                
                 <DataProduct/>    
            </div>
         </div>
