@@ -55,7 +55,7 @@ function DetailsOrder(props) {
         sum = sum + product.quantity * product.price
       })
       setTotal(sum);
-    });
+    },);
   const handleOpen = () => {
     setOpenDialog(true)
   }

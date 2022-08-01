@@ -87,17 +87,11 @@ const DataOrders = () => {
     const resRoles = await http.get(api.GetAllRoles);
     dispatch(RoleGetAll(resRoles.data));
   }
-  // API profile
-  const getProfile = async () => {
-  const resEmp = await http.get(api.GetProfileByIdEmp + user.employeeID);
-    dispatch(GetProfile(resEmp.data));
-  }
 
   useEffect(() => {
     getAllOrder();
     getAllEmployee();
     getAllRole();
-    getProfile();
   }, []);
 
   const user = useSelector((state) => state.user.currentUser);
@@ -107,8 +101,6 @@ const DataOrders = () => {
   const orders = useSelector((state) => state.orders.orders);
   //select employees
   const employees = useSelector((state) => state.employees.employees);
-  //select profile
-  const profiles = useSelector((state) => state.profile.profile);
   //#endregion
 
 
@@ -153,25 +145,22 @@ const DataOrders = () => {
   let Orlist = [];
 
   const empList = employees.filter(emp => emp.superiors === user.employeeID)
-  
-  
-  for (let i = 0; i < orders.length; i++) {
-    if(orders[i].employeeId === user.employeeID){
-      Orlist.push(orders[i]);
-    }
-  }
 
-  for (let i = 0; i < empList.length; i++) {
-    for (let j = 0; j < orders.length; j++) {
-      if (empList[i].employeeId === orders[j].employeeId) {
-         Orlist.push(orders[j]);
+    orders.forEach(function(element){
+      if (element.employeeId === user.employeeID) {
+        Orlist.push(element);
       }
-    }
-  }
- 
+    })
+    empList.forEach(function(element){
+      orders.forEach(function(or){
+        if (element.employeeId === or.employeeId) {
+          Orlist.push(or);
+        }
+      })
+    })
 
 
-  const orderRows = Orlist.map((order) => {
+  const dataRow = Orlist.map((order) => {
     let name = employees.find(e => e.employeeId === order.employeeId)
     if (name === undefined) {
       name = {
@@ -186,6 +175,8 @@ const DataOrders = () => {
       empId: order.employeeId,
     }
   })
+
+  const orderRows=dataRow;
   return (
     <div className="datatableorder">
       {success === true ?
